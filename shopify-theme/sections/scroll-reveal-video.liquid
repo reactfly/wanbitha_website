@@ -7,7 +7,10 @@
   class="scroll-mystery-section"
   data-section-id="{{ section.id }}"
   data-section-type="scroll-mystery"
-  style="--min-height: {{ section.settings.scroll_height }}vh;"
+  style="--min-height: {{ section.settings.scroll_height }}vh; --overlay-opacity: {{ section.settings.overlay_opacity | times: 1.0 | divided_by: 100 }};"
+  data-parallax="{{ section.settings.parallax_speed }}"
+  data-blur="{{ section.settings.blur_intensity }}"
+  data-scale="{{ section.settings.scale_intensity }}"
 >
   <div class="scroll-mystery__sticky-container">
     <div class="scroll-mystery__video-wrapper">
@@ -93,12 +96,13 @@
     height: 100%;
     object-fit: cover;
     opacity: 0;
+    /* Blur and Scale initial values will be set by JS based on data attributes,
+       but we keep defaults here to avoid FOUC */
     filter: blur(20px) grayscale(100%);
     transform: scale(1.2);
-    /* Mystery Reveal Mask: Starts small circle, expands to full */
+    /* Mystery Reveal Mask */
     -webkit-mask-image: radial-gradient(circle at center, black 0%, transparent 0%);
     mask-image: radial-gradient(circle at center, black 0%, transparent 0%);
-    transition: opacity 0.1s linear; /* Smoothness handled by RAF */
     will-change: opacity, filter, transform, mask-image;
     mix-blend-mode: {{ section.settings.blend_mode }};
   }
@@ -106,10 +110,9 @@
   .scroll-mystery__video-overlay {
     position: absolute;
     inset: 0;
-    /* Vignette effect */
     background: radial-gradient(circle, transparent 40%, var(--color-bg-primary) 120%);
     z-index: 2;
-    opacity: 0.8;
+    opacity: var(--overlay-opacity, 0.8);
   }
 
   /* Poster Image Fallback */
@@ -210,11 +213,8 @@
 
 <script>
   (function () {
-    // Helper to format mask string
     function getMaskString(size) {
-      // Ensure size is valid percentage
       const s = Math.max(0, size);
-      // Soft edge for the mask: transparent starts 20% after black ends
       return `radial-gradient(circle at center, black ${s}%, transparent ${s + 20}%)`;
     }
 
@@ -223,6 +223,13 @@
       const poster = section.querySelector('.scroll-mystery__poster');
       const dots = section.querySelectorAll('.scroll-mystery__dot');
       const content = section.querySelector('.scroll-mystery__content');
+
+      // Configuration from data attributes
+      const config = {
+        parallaxSpeed: parseFloat(section.dataset.parallax || 0.5),
+        maxBlur: parseInt(section.dataset.blur || 20),
+        maxScale: parseFloat(section.dataset.scale || 1.2),
+      };
 
       let rafId = null;
 
@@ -240,33 +247,40 @@
         const revealPhase = Math.min(1, progress * 1.6);
 
         if (video) {
-          // Opacity: 0 -> 1
+          // Opacity
           video.style.opacity = Math.min(1, revealPhase * 1.5);
 
-          // Blur: 20px -> 0px
+          // Blur: maxBlur -> 0px
+          const currentBlur = config.maxBlur - revealPhase * config.maxBlur;
           // Grayscale: 100% -> 0%
-          video.style.filter = `blur(${20 - revealPhase * 20}px) grayscale(${100 - revealPhase * 100}%)`;
+          const currentGray = 100 - revealPhase * 100;
+          video.style.filter = `blur(${currentBlur}px) grayscale(${currentGray}%)`;
 
-          // Scale: 1.2 -> 1.0
-          video.style.transform = `scale(${1.2 - revealPhase * 0.2})`;
+          // Scale: maxScale -> 1.0 (Zoom Out effect)
+          const currentScale = config.maxScale - revealPhase * (config.maxScale - 1.0);
 
-          // Mask Expand: 0% -> 150%
+          // Parallax Y movement: move video slightly down as we scroll
+          // We use progress for the parallax offset
+          const parallaxY = progress * 100 * config.parallaxSpeed;
+
+          video.style.transform = `scale(${currentScale}) translateY(${parallaxY}px)`;
+
+          // Mask Expand
           const maskSize = revealPhase * 150;
           const maskVal = getMaskString(maskSize);
           video.style.webkitMaskImage = maskVal;
           video.style.maskImage = maskVal;
         }
 
-        // Poster fade out as video reveals
         if (poster) {
           poster.style.opacity = Math.max(0, 0.2 - revealPhase * 0.2);
         }
 
-        // 2. Content Parallax / Fade (Starts after 30%)
         if (content) {
           if (progress > 0.3) {
-            const contentProgress = Math.min(1, (progress - 0.3) * 2); // fast fade
+            const contentProgress = Math.min(1, (progress - 0.3) * 2);
             content.style.opacity = contentProgress;
+            // Parallax on content too? Maybe a little bit
             content.style.transform = `translateY(${40 - contentProgress * 40}px)`;
           } else {
             content.style.opacity = 0;
@@ -274,12 +288,10 @@
           }
         }
 
-        // 3. Navigation Dots
         if (progress < 0.33) updateDots(dots, 0);
         else if (progress < 0.66) updateDots(dots, 1);
         else updateDots(dots, 2);
 
-        // 4. Intro Hint
         if (progress < 0.05) section.classList.add('is-intro');
         else section.classList.remove('is-intro');
 
@@ -297,15 +309,15 @@
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
               window.addEventListener('scroll', onScroll, { passive: true });
-              if (video && video.paused) video.play().catch(() => {}); // Autoplay if allowed
-              onScroll(); // Force update
+              if (video && video.paused) video.play().catch(() => {});
+              onScroll();
             } else {
               window.removeEventListener('scroll', onScroll);
               if (video && !video.paused) video.pause();
             }
           });
         },
-        { rootMargin: '0px 0px 0px 0px' }
+        { rootMargin: '0px' }
       );
 
       observer.observe(section);
@@ -317,10 +329,8 @@
       });
     };
 
-    // Initialize all instances
     document.querySelectorAll('[data-section-type="scroll-mystery"]').forEach(initSection);
 
-    // Listen for Shopify theme editor events
     document.addEventListener('shopify:section:load', (e) => {
       if (e.target.dataset.sectionType === 'scroll-mystery') initSection(e.target);
     });
@@ -344,6 +354,10 @@
       "info": "Shown while video loads or as a fallback."
     },
     {
+      "type": "header",
+      "content": "Layout & Animation"
+    },
+    {
       "type": "range",
       "id": "scroll_height",
       "min": 150,
@@ -352,6 +366,38 @@
       "unit": "vh",
       "label": "Scroll Distance Height",
       "default": 300
+    },
+    {
+      "type": "range",
+      "id": "parallax_speed",
+      "min": 0,
+      "max": 2,
+      "step": 0.1,
+      "label": "Parallax Intensity",
+      "default": 0.5
+    },
+    {
+      "type": "range",
+      "id": "scale_intensity",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "label": "Initial Zoom Scale",
+      "default": 1.2
+    },
+    {
+      "type": "range",
+      "id": "blur_intensity",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Initial Blur Amount",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Styling"
     },
     {
       "type": "text",
@@ -364,6 +410,16 @@
       "id": "text",
       "label": "Text",
       "default": "Role para revelar os mistérios ocultos."
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay Opacity",
+      "default": 80
     },
     {
       "type": "select",
