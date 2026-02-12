@@ -3,33 +3,23 @@ frontend:
   phases:
     preBuild:
       commands:
-        # ═══ Environment Validation ═══
-        - echo "╔══════════════════════════════════════════════════╗"
-        - echo "║  WanBitha — AWS Amplify Build Pipeline           ║"
-        - echo "╚══════════════════════════════════════════════════╝"
+        # ═══ Force Node.js 20 (CRITICAL for Vite 7 + npm lockfile v3) ═══
+        - nvm install 20
+        - nvm use 20
         - node --version
         - npm --version
         # ═══ Install Dependencies ═══
-        # --prefer-offline: uses cache when possible
-        # --no-audit: skips vuln audit during CI (faster)
-        # --no-fund: suppresses funding messages
         - npm ci --prefer-offline --no-audit --no-fund
     build:
       commands:
         # ═══ Production Build ═══
-        - echo "Building WanBitha SPA for production..."
         - npm run build
         # ═══ Post-Build Validation ═══
-        - echo "Validating build output..."
-        - test -f dist/index.html && echo "✓ index.html found" || (echo "✗ CRITICAL: index.html missing!" && exit 1)
-        - ls -la dist/
-        - echo "Build completed successfully ✓"
+        - test -f dist/index.html && echo "✓ Build OK" || (echo "✗ FAIL: index.html missing!" && exit 1)
   artifacts:
-    # ═══ Output Directory ═══
     baseDirectory: dist
     files:
       - "**/*"
   cache:
-    # ═══ Cache node_modules Between Builds ═══
     paths:
       - "node_modules/**/*"
