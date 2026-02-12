@@ -3,7 +3,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { TextReveal } from './TextReveal'
 import { ParallaxSection } from './ParallaxImage'
-import { Tilt } from './Tilt' // Import Tilt
+import { Tilt } from './Tilt'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -28,7 +28,7 @@ const AnimatedCounter = ({ value, label }) => {
         const obj = { val: 0 }
         gsap.to(obj, {
           val: numericValue,
-          duration: 2.5, // Slower for elegance
+          duration: 2.5,
           ease: 'power3.out',
           onUpdate: () => {
             if (numberRef.current) {
@@ -95,30 +95,30 @@ export const About = () => {
 
   const features = [
     {
-      title: 'Design',
-      desc: 'UI/UX imersivo e centrado no humano. Cada detalhe é pensado para criar conexões emocionais profundas.',
+      title: 'Expressão',
+      desc: 'Uma busca pessoal profunda que floresceu em um estilo único, onde a alma encontra a forma através das cores.',
       icon: '◆',
       color: '#d946a8'
     },
     {
-      title: 'Tecnologia',
-      desc: 'React, Three.js e arquitetura escalável. Performance extrema e inovação em cada linha de código.',
+      title: 'Técnica',
+      desc: 'Técnicas tradicionais e experimentações contemporâneas se fundem em cada obra, criando narrativas visuais únicas.',
       icon: '▲',
       color: '#c084fc'
     },
     {
-      title: 'Arte',
-      desc: 'Direção criativa e storytelling visual. Transformamos conceitos abstratos em experiências memoráveis.',
+      title: 'Missão',
+      desc: 'Transformar o abstrato da alma em algo palpável, criando pontes entre o invisível e o olhar do espectador.',
       icon: '●',
       color: '#fbbf24'
     }
   ]
 
   const stats = [
-    { value: '50+', label: 'Projetos' },
-    { value: '100%', label: 'Satisfação' },
-    { value: '5+', label: 'Anos' },
-    { value: '24/7', label: 'Suporte' }
+    { value: '50+', label: 'Obras' },
+    { value: '10+', label: 'Exposições' },
+    { value: '8+', label: 'Anos' },
+    { value: '3', label: 'Séries' }
   ]
 
   return (
@@ -134,22 +134,21 @@ export const About = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-32 items-end">
           <div>
              <span className="text-label text-rose-hot/80 mb-6 block tracking-[0.3em]">
-              MANIFESTO
+              A ESSÊNCIA
             </span>
             <h2
               ref={titleRef}
               className="text-6xl md:text-8xl font-display leading-[0.85]"
             >
-              <span className="block text-white">Arte &</span>
+              <span className="block text-white">O Traço</span>
               <span className="block bg-gradient-to-r from-rose-hot via-purple-500 to-gold bg-clip-text text-transparent">
-                Código
+                por Trás da Obra
               </span>
             </h2>
           </div>
           <div className="text-lg md:text-xl text-white/70 font-editorial leading-relaxed max-w-xl">
              <TextReveal type="words" delay={0.2}>
-               Nós não apenas construímos websites. Nós esculpimos jornadas digitais que desafiam o convencional. 
-               Onde a estética encontra a função em um balé perfeito de pixels.
+               WanBitha é o nome artístico de Wanessa Alcântara, uma artista plástica brasileira que encontrou na arte sua linguagem mais profunda. O que começou como uma busca pessoal por expressão floresceu em um estilo único, onde técnicas tradicionais e experimentações contemporâneas se fundem.
              </TextReveal>
           </div>
         </div>
@@ -182,21 +181,24 @@ export const About = () => {
           ))}
         </div>
 
-        {/* Full Width Parallax Section */}
+        {/* Full Width Parallax Section — Manifesto Quote */}
         <div className="mb-40 rounded-4xl overflow-hidden border border-white/10 relative">
              <ParallaxSection
-              imageSrc="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=1600&q=80"
-              imageAlt="Abstract digital art"
+              imageSrc="https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=1600&q=80"
+              imageAlt="WanBitha - Arte Abstrata"
               imagePosition="center"
               parallaxSpeed={0.2}
               className="py-32"
             >
               <div className="text-center relative z-10">
-                 <h3 className="text-5xl md:text-7xl font-display mb-8 text-white">
-                    Visão de Futuro
+                 <h3 className="text-5xl md:text-7xl font-display mb-8 text-white italic">
+                    Manifesto
                  </h3>
-                 <p className="max-w-2xl mx-auto text-xl text-white/80 font-editorial">
-                    "O design não é apenas o que parece e o que se sente. O design é como funciona."
+                 <p className="max-w-3xl mx-auto text-xl md:text-2xl text-white/90 font-editorial italic leading-relaxed">
+                    "A arte não é o que você vê, mas o que você faz os outros verem."
+                 </p>
+                 <p className="mt-6 text-white/50 font-body text-sm tracking-[0.3em] uppercase">
+                    — WanBitha
                  </p>
               </div>
             </ParallaxSection>

@@ -1,7 +1,7 @@
 import React, { useRef, useLayoutEffect, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { Mail, MapPin, Instagram, Linkedin, Twitter, MessageCircle, CheckCircle, Loader2 } from 'lucide-react'
+import { Mail, MapPin, Instagram, MessageCircle, CheckCircle, Loader2 } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -50,8 +50,6 @@ export const Contact = () => {
     e.target.style.borderColor = 'rgba(192,132,252,0.5)'
     e.target.style.background = 'rgba(255,255,255,0.06)'
     e.target.style.boxShadow = '0 0 0 3px rgba(192,132,252,0.1), 0 0 20px rgba(192,132,252,0.05)'
-    
-    // Animate label? Simplified to just input focus for now
   }
   const handleBlur = (e) => {
     e.target.style.borderColor = 'rgba(255,255,255,0.08)'
@@ -61,13 +59,11 @@ export const Contact = () => {
 
   const contactInfo = [
     { icon: Mail, label: 'Email', value: 'contato@wanbitha.com', color: '#d946a8' },
-    { icon: MapPin, label: 'Localização', value: 'São Paulo, Brasil', color: '#c084fc' }
+    { icon: MapPin, label: 'Ateliê', value: 'São Paulo, Brasil', color: '#c084fc' }
   ]
 
   const socials = [
     { name: 'Instagram', icon: Instagram, color: '#E4405F', href: '#' },
-    { name: 'LinkedIn', icon: Linkedin, color: '#0A66C2', href: '#' },
-    { name: 'Twitter', icon: Twitter, color: '#1DA1F2', href: '#' },
     { name: 'WhatsApp', icon: MessageCircle, color: '#25D366', href: '#' },
   ]
 
@@ -101,17 +97,9 @@ export const Contact = () => {
           >
             Vamos Conversar
           </h2>
-          <h3 className="text-3xl md:text-4xl lg:text-5xl font-display leading-[0.9]">
-            <span style={{
-              background: 'linear-gradient(135deg, #c084fc, #fbbf24, #f472c4)',
-              backgroundSize: '200% 200%',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              animation: 'gradientMove 5s ease infinite',
-            }}>
-              Wanessa Bitha
-            </span>
-          </h3>
+          <p className="text-lg text-white/50 max-w-xl mx-auto font-editorial">
+            Interessado em uma obra? Quer saber mais sobre o processo criativo? Entre em contato.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
@@ -132,7 +120,7 @@ export const Contact = () => {
                  </div>
                  <h3 className="text-2xl font-display text-white mb-2">Mensagem Enviada!</h3>
                  <p className="text-white/60 text-center max-w-xs">
-                   Obrigado pelo contato. Retornaremos em breve.
+                   Obrigada pelo contato. Retornarei em breve.
                  </p>
                  <button 
                    onClick={() => setFormStatus('idle')}
@@ -156,11 +144,11 @@ export const Contact = () => {
               </div>
               <div>
                 <label className="block font-body text-xs text-white/35 uppercase tracking-wider mb-2">Assunto</label>
-                <input type="text" required className={inputClass} style={inputStyle} placeholder="Como podemos ajudar?" onFocus={handleFocus} onBlur={handleBlur} />
+                <input type="text" required className={inputClass} style={inputStyle} placeholder="Interesse em obra, encomenda, exposição..." onFocus={handleFocus} onBlur={handleBlur} />
               </div>
               <div>
                 <label className="block font-body text-xs text-white/35 uppercase tracking-wider mb-2">Mensagem</label>
-                <textarea rows={5} required className={inputClass + ' resize-none'} style={inputStyle} placeholder="Descreva seu projeto..." onFocus={handleFocus} onBlur={handleBlur} />
+                <textarea rows={5} required className={inputClass + ' resize-none'} style={inputStyle} placeholder="Conte-me mais sobre o que você busca..." onFocus={handleFocus} onBlur={handleBlur} />
               </div>
 
               <button
@@ -191,7 +179,6 @@ export const Contact = () => {
 
           {/* Contact info */}
           <div ref={infoRef} className="lg:col-span-2 space-y-5">
-            {/* Same info cards... */}
             <div className="rounded-2xl p-8" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(12px)' }}>
               <h3 className="font-display text-lg text-white/80 mb-6">Informações</h3>
               <div className="space-y-5">
@@ -223,6 +210,14 @@ export const Contact = () => {
                   </a>
                 ))}
               </div>
+            </div>
+
+            {/* Manifesto mini-quote */}
+            <div className="rounded-2xl p-8" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(12px)' }}>
+              <p className="font-editorial text-white/60 italic text-sm leading-relaxed">
+                "A arte não é o que você vê, mas o que você faz os outros verem."
+              </p>
+              <p className="font-body text-xs text-white/30 mt-3 tracking-widest uppercase">— WanBitha</p>
             </div>
           </div>
         </div>

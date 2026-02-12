@@ -1,0 +1,15 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# WanBitha — AWS Amplify Redirects & Rewrites
+# ═══════════════════════════════════════════════════════════════════════════
+# SPA fallback: All non-asset routes → index.html (react-router handles them)
+# This is CRITICAL for client-side routing with react-router-dom v7
+#
+# Format: source  target  status  [condition]
+# ═══════════════════════════════════════════════════════════════════════════
+
+# Security: Block direct access to source maps in production
+/assets/*.map    /index.html    404
+
+# SPA catch-all fallback (MUST be last rule)
+# 200 rewrite = serves index.html but preserves the URL in the browser
+/*    /index.html    200

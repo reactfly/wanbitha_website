@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand Colors -->
+    <color name="rose_hot">#FFD946A8</color>
+    <color name="gold">#FFFBBF24</color>
+    <color name="lavender">#FFC084FC</color>
+    <color name="lavender_dark">#FF9333EA</color>
+    <color name="rose_soft">#FFF9A8D4</color>
+    <color name="pink_accent">#FFF472C4</color>
+
+    <!-- Background -->
+    <color name="background_dark">#FF0A0A0A</color>
+    <color name="surface_dark">#FF1A0A16</color>
+    <color name="surface_elevated">#FF1A1A2E</color>
+
+    <!-- Text -->
+    <color name="text_primary">#FFFFFFFF</color>
+    <color name="text_secondary">#B3FFFFFF</color>
+    <color name="text_tertiary">#66FFFFFF</color>
+    <color name="text_faint">#33FFFFFF</color>
+
+    <!-- Splash -->
+    <color name="splash_background">#FF0A0A0A</color>
+
+    <!-- Glass -->
+    <color name="glass_background">#0AFFFFFF</color>
+    <color name="glass_border">#14FFFFFF</color>
+</resources>

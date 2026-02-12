@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WanBitha</string>
+
+    <!-- Hero / Intro -->
+    <string name="hero_badge">Artista Plástica Contemporânea</string>
+    <string name="hero_title">WanBitha</string>
+    <string name="hero_subtitle">A Arte de Sentir em Cores e Texturas</string>
+    <string name="hero_description">Conheça o universo de WanBitha: obras que desafiam os sentidos e transformam emoções em narrativas visuais contemporâneas.</string>
+    <string name="hero_cta">Explorar Galeria</string>
+
+    <!-- About -->
+    <string name="about_section_label">A Essência</string>
+    <string name="about_title">O Traço por Trás da Obra</string>
+    <string name="about_bio">WanBitha é o nome artístico de Wanessa Alcântara, uma artista plástica brasileira que encontrou na arte sua linguagem mais profunda. O que começou como uma busca pessoal por expressão floresceu em um estilo único, onde técnicas tradicionais e experimentações contemporâneas se fundem.</string>
+    <string name="about_highlight">Sua missão é transformar o abstrato da alma em algo palpável, criando pontes entre o invisível e o olhar do espectador.</string>
+
+    <!-- Features -->
+    <string name="feature_expression_title">Expressão</string>
+    <string name="feature_expression_desc">Uma busca pessoal profunda que floresceu em um estilo único, onde a alma encontra a forma através das cores.</string>
+    <string name="feature_technique_title">Técnica</string>
+    <string name="feature_technique_desc">Técnicas tradicionais e experimentações contemporâneas se fundem em cada obra, criando narrativas visuais únicas.</string>
+    <string name="feature_mission_title">Missão</string>
+    <string name="feature_mission_desc">Transformar o abstrato da alma em algo palpável, criando pontes entre o invisível e o olhar do espectador.</string>
+
+    <!-- Gallery -->
+    <string name="gallery_section_label">Galeria</string>
+    <string name="gallery_title">Mergulhe no Vibrante</string>
+    <string name="gallery_subtitle">Cada tela é um convite à introspecção. Qual narrativa você escolherá hoje?</string>
+    <string name="gallery_filter_all">Todas</string>
+
+    <!-- Series -->
+    <string name="series_emotions">Série Emoções</string>
+    <string name="series_emotions_desc">Onde as cores ditam o ritmo do sentimento.</string>
+    <string name="series_textures">Série Texturas</string>
+    <string name="series_textures_desc">Obras que convidam ao toque visual e à profundidade.</string>
+    <string name="series_contemporary">Série Contemporânea</string>
+    <string name="series_contemporary_desc">A fusão de técnicas e a quebra do óbvio.</string>
+
+    <!-- Manifesto -->
+    <string name="manifesto_title">Manifesto</string>
+    <string name="manifesto_quote">"A arte não é o que você vê, mas o que você faz os outros verem."</string>
+    <string name="manifesto_author">— WanBitha</string>
+
+    <!-- Contact -->
+    <string name="contact_section_label">Contato</string>
+    <string name="contact_title">Vamos Conversar</string>
+    <string name="contact_subtitle">Interessado em uma obra? Quer saber mais sobre o processo criativo? Entre em contato.</string>
+    <string name="contact_name_label">Nome</string>
+    <string name="contact_name_hint">Seu nome</string>
+    <string name="contact_email_label">Email</string>
+    <string name="contact_email_hint">seu@email.com</string>
+    <string name="contact_subject_label">Assunto</string>
+    <string name="contact_subject_hint">Interesse em obra, encomenda, exposição…</string>
+    <string name="contact_message_label">Mensagem</string>
+    <string name="contact_message_hint">Conte-me mais sobre o que você busca…</string>
+    <string name="contact_send">Enviar Mensagem</string>
+    <string name="contact_sending">Enviando…</string>
+    <string name="contact_success_title">Mensagem Enviada!</string>
+    <string name="contact_success_message">Obrigada pelo contato. Retornarei em breve.</string>
+    <string name="contact_send_another">Enviar outra mensagem</string>
+
+    <!-- Contact Info -->
+    <string name="contact_email_value">contato@wanbitha.com</string>
+    <string name="contact_location_label">Ateliê</string>
+    <string name="contact_location_value">São Paulo, Brasil</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Início</string>
+    <string name="nav_gallery">Galeria</string>
+    <string name="nav_about">Sobre</string>
+    <string name="nav_contact">Contato</string>
+
+    <!-- Footer -->
+    <string name="footer_cta_title">Vamos Criar?</string>
+    <string name="footer_cta_desc">Interessado em uma obra ou em uma colaboração artística? Adoraria ouvir sobre sua visão.</string>
+    <string name="footer_copyright">© 2026 WanBitha — Wanessa Alcântara. Todos os direitos reservados.</string>
+
+    <!-- Stats -->
+    <string name="stat_works">Obras</string>
+    <string name="stat_exhibitions">Exposições</string>
+    <string name="stat_years">Anos</string>
+    <string name="stat_series">Séries</string>
+
+    <!-- Accessibility -->
+    <string name="cd_back">Voltar</string>
+    <string name="cd_artwork">Obra de arte</string>
+    <string name="cd_close">Fechar</string>
+    <string name="cd_zoom_in">Ampliar</string>
+    <string name="cd_next">Próxima</string>
+    <string name="cd_previous">Anterior</string>
+</resources>

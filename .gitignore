@@ -1,4 +1,16 @@
-# Logs
+# ═══ Dependencies ═══
+node_modules
+
+# ═══ Build Output ═══
+dist
+dist-ssr
+
+# ═══ Environment ═══
+.env
+.env.*
+*.local
+
+# ═══ Logs ═══
 logs
 *.log
 npm-debug.log*
@@ -7,16 +19,29 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# ═══ AWS Amplify ═══
+amplify/#current-cloud-backend
+amplify/.config/local-*
+amplify/mock-data
+amplify/mock-api-resources
+amplify/backend/amplify-meta.json
+amplify/backend/.temp
+aws-exports.js
+awsconfiguration.json
 
-# Editor directories and files
+# ═══ Android App Build ═══
+android-app/.gradle
+android-app/app/build
+android-app/build
+android-app/local.properties
+android-app/.idea
+
+# ═══ Editor / OS ═══
 .vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
+Thumbs.db
 *.suo
 *.ntvs*
 *.njsproj

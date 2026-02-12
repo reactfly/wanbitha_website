@@ -4,13 +4,13 @@ import { ArrowUpRight } from 'lucide-react'
 const footerLinks = [
   { label: 'Início', id: 'inicio' },
   { label: 'Sobre', id: 'sobre' },
-  { label: 'Projetos', id: 'galeria' }, // Fixed ID
+  { label: 'Galeria', id: 'galeria' },
   { label: 'Contato', id: 'contato' },
 ]
 
-const services = ['UI/UX Design', 'Desenvolvimento Web', 'WebGL & 3D', 'Branding', 'Consultoria']
+const series = ['Série Emoções', 'Série Texturas', 'Série Contemporânea']
 
-const socials = ['Instagram', 'LinkedIn', 'Behance', 'GitHub']
+const socials = ['Instagram', 'WhatsApp']
 
 export const Footer = () => {
   const scrollTo = (id) => {
@@ -33,14 +33,14 @@ export const Footer = () => {
               <span className="text-white/40 italic font-editorial">Criar?</span>
             </h2>
             <p className="text-xl text-white/60 max-w-md mb-12">
-              Pronto para transformar sua visão digital em realidade? 
-              Estamos ansiosos para ouvir sobre seu próximo projeto.
+              Interessado em uma obra ou em uma colaboração artística? 
+              Adoraria ouvir sobre sua visão.
             </p>
             <button 
               onClick={() => scrollTo('contato')}
               className="group flex items-center gap-3 px-8 py-4 bg-white text-black rounded-full text-lg font-medium hover:bg-rose-200 transition-colors"
             >
-              Iniciar Projeto
+              Entrar em Contato
               <ArrowUpRight className="w-5 h-5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
             </button>
           </div>
@@ -78,9 +78,9 @@ export const Footer = () => {
             </div>
 
             <div className="col-span-2 md:col-span-1">
-              <h4 className="text-sm text-white/40 uppercase tracking-widest mb-6">Serviços</h4>
+              <h4 className="text-sm text-white/40 uppercase tracking-widest mb-6">Séries</h4>
               <ul className="space-y-2">
-                {services.map((s) => (
+                {series.map((s) => (
                   <li key={s} className="text-white/50 text-sm">{s}</li>
                 ))}
               </ul>
@@ -91,11 +91,11 @@ export const Footer = () => {
         {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row justify-between items-end border-t border-white/10 pt-12">
           <div className="mb-8 md:mb-0">
-            <h3 className="text-2xl font-display text-white mb-2">Wanessa Bitha</h3>
-            <p className="text-white/30 text-xs">© 2026 Todos os direitos reservados.</p>
+            <h3 className="text-2xl font-display text-white mb-2">WanBitha</h3>
+            <p className="text-white/30 text-xs">© 2026 WanBitha — Wanessa Alcântara. Todos os direitos reservados.</p>
           </div>
           <div className="flex gap-8 text-xs text-white/30">
-            <a href="#" className="hover:text-white transition-colors">Politica de Privacidade</a>
+            <a href="#" className="hover:text-white transition-colors">Política de Privacidade</a>
             <a href="#" className="hover:text-white transition-colors">Termos de Uso</a>
           </div>
         </div>
@@ -103,7 +103,7 @@ export const Footer = () => {
         {/* Big Text Background */}
         <div className="absolute -bottom-20 left-0 w-full overflow-hidden pointer-events-none opacity-[0.03]">
           <h1 className="text-[20vw] font-display whitespace-nowrap leading-none text-white select-none">
-            WANESSA BITHA
+            WANBITHA
           </h1>
         </div>
       </div>

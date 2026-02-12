@@ -43,6 +43,8 @@ export default defineConfig({
         ]
       },
       workbox: {
+        // ═══ Amplify Optimization: Skip SW precaching for large 3D assets ═══
+        globIgnores: ['**/textures/**'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -51,7 +53,7 @@ export default defineConfig({
               cacheName: 'google-fonts-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
+                maxAgeSeconds: 60 * 60 * 24 * 365 // 365 days
               },
               cacheableResponse: {
                 statuses: [0, 200]
@@ -65,7 +67,7 @@ export default defineConfig({
               cacheName: 'gstatic-fonts-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
+                maxAgeSeconds: 60 * 60 * 24 * 365 // 365 days
               },
               cacheableResponse: {
                 statuses: [0, 200]
@@ -79,7 +81,22 @@ export default defineConfig({
               cacheName: 'images-cache',
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 30 // <== 30 days
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+              }
+            }
+          },
+          // ═══ Cache Unsplash images for gallery (external) ═══
+          {
+            urlPattern: /^https:\/\/images\.unsplash\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'unsplash-images-cache',
+              expiration: {
+                maxEntries: 30,
+                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
               }
             }
           }
@@ -87,4 +104,41 @@ export default defineConfig({
       }
     })
   ],
+
+  // ═══ Amplify Production Build Optimizations ═══
+  build: {
+    // Vite 7 default target — supports modern browsers
+    target: 'esnext',
+    // Don't inline assets over 4KB (better CDN caching)
+    assetsInlineLimit: 4096,
+    // Generate source maps for debugging (blocked via headers in prod)
+    sourcemap: false,
+    // Rollup optimizations
+    rollupOptions: {
+      output: {
+        // Manual chunks to optimize code-splitting
+        manualChunks(id) {
+          // ═══ Three.js ecosystem (~1MB) — cached separately ═══
+          if (id.includes('node_modules/three') ||
+              id.includes('node_modules/@react-three')) {
+            return 'vendor-three'
+          }
+          // ═══ Animation libraries (~70KB) ═══
+          if (id.includes('node_modules/gsap') ||
+              id.includes('node_modules/framer-motion')) {
+            return 'vendor-animation'
+          }
+          // ═══ Core framework (React + Router + utilities) ═══
+          if (id.includes('node_modules/react') ||
+              id.includes('node_modules/react-dom') ||
+              id.includes('node_modules/react-router') ||
+              id.includes('node_modules/scheduler')) {
+            return 'vendor-core'
+          }
+        },
+      },
+    },
+    // Increase chunk size warning for Three.js heavy bundles
+    chunkSizeWarningLimit: 600,
+  },
 })

@@ -1,7 +1,7 @@
 import React, { useRef, useLayoutEffect, useCallback } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { Palette, Code2, Sparkles } from 'lucide-react'
+import { Brush, Layers, Sparkles } from 'lucide-react'
 import { AnimatedLogo } from './AnimatedLogo'
 import { Typewriter } from './Typewriter'
 
@@ -118,9 +118,6 @@ export const Hero = () => {
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       // ─── Animations ───
-      // 1. Description Assembly
-
-      // 2. Description Assembly
       gsap.from(descRef.current, {
         opacity: 0, 
         y: 50, 
@@ -129,21 +126,17 @@ export const Hero = () => {
         scrollTrigger: { trigger: descRef.current, start: 'top 85%', toggleActions: 'play none none reverse' }
       })
 
-      // 3. Service Cards "Puzzle Pieces" Snap
-      // They fly in from corners to form the grid
+      // Service Cards "Puzzle Pieces" Snap
       const cards = cardsRef.current.filter(Boolean)
       
-      // Card 1 (Left): Comes from left-bottom
       gsap.from(cards[0], {
         x: -300, y: 200, rotation: -45, opacity: 0, scale: 0.5,
         scrollTrigger: { trigger: container.current, start: 'top 70%', scrub: 1, end: 'top 20%' }
       })
-      // Card 2 (Center): Comes from top (drops in)
       gsap.from(cards[1], {
         y: -300, rotation: 180, opacity: 0, scale: 0.5,
         scrollTrigger: { trigger: container.current, start: 'top 70%', scrub: 1, end: 'top 20%' }
       })
-      // Card 3 (Right): Comes from right-bottom
       gsap.from(cards[2], {
         x: 300, y: 200, rotation: 45, opacity: 0, scale: 0.5,
         scrollTrigger: { trigger: container.current, start: 'top 70%', scrub: 1, end: 'top 20%' }
@@ -160,10 +153,10 @@ export const Hero = () => {
     return () => ctx.revert()
   }, [])
 
-  const services = [
-    { icon: Palette, title: 'Design', desc: 'Interfaces imersivas que encantam', color: '#d946a8' },
-    { icon: Code2, title: 'Desenvolvimento', desc: 'Código limpo e performático', color: '#c084fc' },
-    { icon: Sparkles, title: 'Experiência', desc: 'Interações que contam histórias', color: '#fbbf24' },
+  const series = [
+    { icon: Brush, title: 'Série Emoções', desc: 'Onde as cores ditam o ritmo do sentimento.', color: '#d946a8' },
+    { icon: Layers, title: 'Série Texturas', desc: 'Obras que convidam ao toque visual e à profundidade.', color: '#c084fc' },
+    { icon: Sparkles, title: 'Série Contemporânea', desc: 'A fusão de técnicas e a quebra do óbvio.', color: '#fbbf24' },
   ]
 
   return (
@@ -201,7 +194,7 @@ export const Hero = () => {
         {/* Section label */}
         <div className="mb-6">
           <span className="text-label text-white/35">
-            O que fazemos
+            Universo Artístico
           </span>
         </div>
 
@@ -213,7 +206,7 @@ export const Hero = () => {
           {/* Row 1 */}
           <div className="block">
             <Typewriter 
-              text="Criamos experiências" 
+              text="A Arte de Sentir" 
               className="text-gradient-mixed"
               speed={0.07}
             />
@@ -221,7 +214,7 @@ export const Hero = () => {
           {/* Row 2 */}
           <div className="block mt-2">
             <Typewriter 
-              text="que inspiram" 
+              text="em Cores e Texturas" 
               className="text-gradient-gold" 
               delay={1.5}
               speed={0.07}
@@ -234,8 +227,8 @@ export const Hero = () => {
           ref={descRef}
           className="text-editorial text-tertiary max-w-2xl mx-auto mb-12 leading-relaxed"
         >
-          Unimos arte, design e tecnologia para construir experiências digitais
-          que vão além do esperado.
+          Conheça o universo de WanBitha: obras que desafiam os sentidos
+          e transformam emoções em narrativas visuais contemporâneas.
         </p>
 
         {/* Decorative line */}
@@ -245,9 +238,9 @@ export const Hero = () => {
           style={{ background: 'linear-gradient(90deg, transparent, rgba(192,132,252,0.4), transparent)' }}
         />
 
-        {/* Service cards with 3D tilt */}
+        {/* Series cards with 3D tilt */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {services.map((item, i) => (
+          {series.map((item, i) => (
             <div key={i} ref={el => cardsRef.current[i] = el}>
               <TiltCard {...item} index={i} />
             </div>

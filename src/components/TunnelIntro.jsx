@@ -190,7 +190,7 @@ export const TunnelIntro = () => {
         repeat: -1,
         yoyo: true,
         ease: 'sine.inOut',
-        stagger: { each: 0.02, from: 'center' } // Wave breathing
+        stagger: { each: 0.02, from: 'center' }
       })
 
       // Title subtle float
@@ -208,8 +208,8 @@ export const TunnelIntro = () => {
       gsap.to(particleRefs.current.filter(Boolean), {
         y: (i) => Math.sin(i * 0.8 + 2) * 20,
         x: (i) => Math.cos(i * 0.6 + 1) * 15,
-        opacity: (i) => 0.3 + Math.random() * 0.5, // Twinkle
-        scale: (i) => 0.8 + Math.random() * 0.4, // Pulse size
+        opacity: (i) => 0.3 + Math.random() * 0.5,
+        scale: (i) => 0.8 + Math.random() * 0.4,
         duration: 3 + Math.random() * 2,
         repeat: -1,
         yoyo: true,
@@ -233,7 +233,7 @@ export const TunnelIntro = () => {
         .to(scrollHintRef.current, { opacity: 0, y: -20, duration: 0.05 }, 0)
         .to(badgeRef.current, { opacity: 0, y: -60, duration: 0.2 }, 0)
         .to([lineTopRef.current, lineBotRef.current], { opacity: 0, scaleX: 0, duration: 0.15 }, 0.02)
-        .to(ringRef.current?.parentElement, { opacity: 0, scale: 0.5, rotate: 180, duration: 0.4 }, 0.03) // Spin out
+        .to(ringRef.current?.parentElement, { opacity: 0, scale: 0.5, rotate: 180, duration: 0.4 }, 0.03)
         .to(particleRefs.current.filter(Boolean), { 
           opacity: 0, 
           y: (i) => -150 - i * 30, 
@@ -244,7 +244,7 @@ export const TunnelIntro = () => {
         .to(chars, {
           opacity: 0,
           y: (i) => -100 - i * 10,
-          z: -200, // Fly into screen
+          z: -200,
           rotateX: -45,
           scale: 0.8,
           stagger: { each: 0.01, from: 'edges' },
@@ -266,7 +266,7 @@ export const TunnelIntro = () => {
     }
   }, [])
 
-  const taglineWords = ['Arte', '·', 'Design', '·', 'Tecnologia']
+  const taglineWords = ['Cores', '·', 'Texturas', '·', 'Emoções']
 
   return (
     <section
@@ -298,7 +298,7 @@ export const TunnelIntro = () => {
               strokeDashoffset="900"
               opacity="0"
             />
-            {/* Secondary Inner Ring (New) */}
+            {/* Secondary Inner Ring */}
             <circle
               className="secondary-ring"
               cx="150" cy="150" r="110"
@@ -386,7 +386,7 @@ export const TunnelIntro = () => {
             }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
-            Digital Experience Studio
+            Artista Plástica Contemporânea
           </span>
         </div>
 
@@ -473,7 +473,7 @@ export const TunnelIntro = () => {
               backdropFilter: 'blur(12px)',
             }}
           >
-            Explorar
+            Explorar Galeria
             <svg className="w-4 h-4 transition-transform duration-500 group-hover:translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
             </svg>
