@@ -5,25 +5,50 @@
         <span class="rich-text-section__label label-tag reveal">{{ section.settings.label }}</span>
       {%- endif -%}
 
-      <h2 class="heading-display heading-display--lg reveal {% if section.settings.gradient_title %}text-gradient{% endif %}">
+      <h2 class="heading-display heading-display--lg reveal stagger-1 {% if section.settings.gradient_title %}text-gradient{% endif %}">
         {{ section.settings.heading }}
       </h2>
 
+      <div class="reveal stagger-2" style="margin: 24px auto; opacity: 0.6;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--color-rose-hot)" stroke-width="1">
+          <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" />
+        </svg>
+      </div>
+
       {%- if section.settings.body != blank -%}
-        <div class="rich-text-section__body text-editorial reveal">
+        <div class="rich-text-section__body text-editorial reveal stagger-3">
           {{ section.settings.body }}
         </div>
       {%- endif -%}
 
       {%- if section.settings.button_text != blank -%}
-        <div class="reveal" style="margin-top:36px;">
-          <a href="{{ section.settings.button_url }}" class="btn btn--{{ section.settings.button_style }}">
+        <div class="reveal stagger-4" style="margin-top:36px;">
+          <a
+            href="{{ section.settings.button_url }}"
+            class="btn btn--{{ section.settings.button_style }} btn--magnetic"
+          >
             {{ section.settings.button_text }}
           </a>
         </div>
       {%- endif -%}
     </div>
   </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { rootMargin: '0px 0px -50px 0px', threshold: 0.1 }
+      );
+      document.querySelectorAll('.rich-text-section .reveal').forEach((el) => observer.observe(el));
+    });
+  </script>
 </section>
 
 {% schema %}

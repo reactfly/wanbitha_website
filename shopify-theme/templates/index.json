@@ -144,11 +144,21 @@
         "post6": { "type": "post", "settings": { "likes": "1.8k", "comments": "56" } }
       },
       "block_order": ["post1", "post2", "post3", "post4", "post5", "post6"]
+    },
+    "mystery_reveal": {
+      "type": "scroll-reveal-video",
+      "settings": {
+        "heading": "Descubra o Invisível",
+        "text": "Onde o silêncio ganha forma e a escuridão revela cores.",
+        "scroll_height": 300,
+        "blend_mode": "screen"
+      }
     }
   },
   "order": [
     "hero",
     "marquee",
+    "mystery_reveal",
     "zoom_gallery",
     "featured",
     "manifesto_text",

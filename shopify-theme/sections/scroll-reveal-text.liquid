@@ -6,6 +6,41 @@
       </h2>
     </div>
   </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const el = document.querySelector('[data-reveal-text]');
+      if (el) {
+        const text = el.textContent.trim();
+        el.innerHTML = '';
+        text.split(/\s+/).forEach((word, index) => {
+          const span = document.createElement('span');
+          span.className = 'reveal-word';
+          span.style.transitionDelay = `${index * 0.05}s`; // Stagger effect
+          span.innerHTML = word + '&nbsp;';
+          el.appendChild(span);
+        });
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.querySelectorAll('.reveal-word').forEach((word) => {
+                  word.classList.add('is-visible');
+                  // Creating a custom 'is-visible' style for reveal-word might be needed if not in CSS
+                  // But we used background-clip in theme.css for .reveal-word
+                  // Let's ensure theme.css handles the transition
+                  word.style.backgroundPosition = '0 0'; // Reveal gradient
+                });
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.5 }
+        );
+        observer.observe(el);
+      }
+    });
+  </script>
 </section>
 
 {% schema %}

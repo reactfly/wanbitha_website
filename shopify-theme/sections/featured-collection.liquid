@@ -24,7 +24,7 @@
 
       {%- if section.settings.show_view_all -%}
         <div class="text-center reveal" style="margin-top:48px;">
-          <a href="{{ collection.url }}" class="btn btn--glass">
+          <a href="{{ collection.url }}" class="btn btn--glass btn--magnetic">
             Ver Todas as Obras
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -49,6 +49,23 @@
       </div>
     {%- endif -%}
   </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target); // Reveal only once
+            }
+          });
+        },
+        { rootMargin: '0px 0px -50px 0px', threshold: 0.1 }
+      );
+
+      document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+    });
+  </script>
 </section>
 
 {% schema %}

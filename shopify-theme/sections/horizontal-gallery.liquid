@@ -1,14 +1,19 @@
-<div class="horizontal-scroll-section" data-horizontal-scroll>
-  <div class="horizontal-scroll__wrapper">
-    <div class="horizontal-scroll__track">
-      <div class="horizontal-scroll__intro">
-        <h2 class="heading-display text-gradient">{{ section.settings.heading }}</h2>
-        <p class="body-text">{{ section.settings.description }}</p>
+<div class="horizontal-scroll-section" data-horizontal-scroll style="height: 300vh;">
+  <div class="horizontal-scroll__wrapper" style="position: sticky; top: 0; height: 100vh; overflow: hidden;">
+    <div
+      class="horizontal-scroll__track"
+      style="display: flex; height: 100%; align-items: center; will-change: transform;"
+    >
+      <div class="horizontal-scroll__intro" style="flex: 0 0 40vw; padding-left: 10vw; padding-right: 5vw;">
+        <h2 class="heading-display heading-display--lg text-gradient">{{ section.settings.heading }}</h2>
+        <p class="body-text text-editorial" style="font-size: 1.2rem; margin-top: 20px;">
+          {{ section.settings.description }}
+        </p>
       </div>
 
       {%- for block in section.blocks -%}
-        <div class="horizontal-card" {{ block.shopify_attributes }}>
-          <div class="horizontal-card__media">
+        <div class="horizontal-card" {{ block.shopify_attributes }} style="flex: 0 0 30vw; padding: 0 2vw;">
+          <div class="horizontal-card__media glass-card shimmer" style="padding: 10px;">
             {%- if block.settings.image != blank -%}
               <img
                 src="{{ block.settings.image | image_url: width: 600 }}"
@@ -16,25 +21,69 @@
                 loading="lazy"
                 width="400"
                 height="500"
+                style="width: 100%; height: auto; display: block; border-radius: 8px;"
+                onload="this.parentElement.classList.remove('shimmer')"
               >
             {%- else -%}
               {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
             {%- endif -%}
             <span class="horizontal-card__number">0{{ forloop.index }}</span>
           </div>
-          <div class="horizontal-card__content">
-            <h3 class="heading-lg">{{ block.settings.heading }}</h3>
-            <p>{{ block.settings.text }}</p>
+          <div class="horizontal-card__content" style="margin-top: 20px;">
+            <h3 class="heading-display" style="font-size: 1.5rem;">{{ block.settings.heading }}</h3>
+            <p class="text-secondary">{{ block.settings.text }}</p>
           </div>
         </div>
       {%- endfor -%}
 
-      <div class="horizontal-scroll__outro">
-        <h3 class="heading-display">Explorar</h3>
+      <div
+        class="horizontal-scroll__outro"
+        style="flex: 0 0 20vw; display: flex; align-items: center; justify-content: center;"
+      >
+        <h3 class="heading-display text-faint">Fim da Jornada</h3>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const section = document.querySelector('[data-horizontal-scroll]');
+    const track = section.querySelector('.horizontal-scroll__track');
+
+    if (section && track) {
+      window.addEventListener(
+        'scroll',
+        () => {
+          const rect = section.getBoundingClientRect();
+          const offsetTop = rect.top;
+          const sectionHeight = section.offsetHeight;
+          const windowHeight = window.innerHeight;
+
+          // Calculate scroll progress within the section
+          // We want 0% when section top hits 0, and 100% when section bottom hits window bottom
+          // Actually for sticky: starts when top hits 0. ends when bottom hits window bottom?
+          // Let's us a simple linear mapping based on sticky behavior.
+
+          if (offsetTop <= 0 && -offsetTop < sectionHeight - windowHeight) {
+            // We are pinning
+            const progress = -offsetTop / (sectionHeight - windowHeight);
+            // Calculate max scroll width.
+            // Total width of track - window width
+            const trackWidth = track.scrollWidth;
+            const maxTranslate = trackWidth - window.innerWidth;
+
+            const translateX = Math.min(progress * maxTranslate, maxTranslate);
+            track.style.transform = `translateX(-${translateX}px)`;
+          } else if (offsetTop > 0) {
+            track.style.transform = `translateX(0px)`;
+          }
+        },
+        { passive: true }
+      );
+    }
+  });
+</script>
 
 {% schema %}
 {

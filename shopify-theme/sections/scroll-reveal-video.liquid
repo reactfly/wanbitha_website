@@ -223,9 +223,14 @@
 
 <script>
   (function () {
+    // Utilities
+    const lerp = (start, end, factor) => start + (end - start) * factor;
+    const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
     function getMaskString(size) {
       const s = Math.max(0, size);
-      return `radial-gradient(circle at center, black ${s}%, transparent ${s + 20}%)`;
+      // Soften the edge slightly for a more premium feel
+      return `radial-gradient(circle at center, black ${s}%, transparent ${s + 25}%)`;
     }
 
     const initSection = (section) => {
@@ -233,33 +238,88 @@
       const poster = section.querySelector('.scroll-mystery__poster');
       const dots = section.querySelectorAll('.scroll-mystery__dot');
       const content = section.querySelector('.scroll-mystery__content');
+      const title = section.querySelector('.scroll-mystery__heading');
+      const body = section.querySelector('.scroll-mystery__body');
 
+      // Config
       const config = {
         parallaxSpeed: parseFloat(section.dataset.parallax || 0.5),
         maxBlur: parseInt(section.dataset.blur || 20),
         maxScale: parseFloat(section.dataset.scale || 1.2),
+        lerpFactor: 0.1, // Adjust for "weight" (lower = smoother/slower)
       };
 
+      // State
+      let targetProgress = 0;
+      let currentProgress = 0;
       let rafId = null;
+      let isVisible = false;
 
-      const update = () => {
+      // Initialize Text Stagger
+      if (title) title.style.transitionDelay = '0ms';
+      if (body) body.style.transitionDelay = '150ms';
+
+      const updateState = () => {
         const rect = section.getBoundingClientRect();
         const winHeight = window.innerHeight;
         const totalDist = section.offsetHeight - winHeight;
 
-        let progress = (rect.top * -1) / totalDist;
-        progress = Math.max(0, Math.min(1, progress));
+        // Calculate progress based on scroll position
+        // 0 when section top hits viewport top (sticky starts)
+        // 1 when section bottom hits viewport bottom (sticky ends)
+        let rawProgress = (rect.top * -1) / diffHeight(section, winHeight);
 
-        const revealPhase = Math.min(1, progress * 1.6);
+        // Handle cases where content is smaller than viewport (shouldn't happen with min-height)
+        if (!isFinite(rawProgress)) rawProgress = 0;
+
+        targetProgress = clamp(rawProgress, 0, 1);
+
+        // If we are significantly far from target, request frame
+        if (Math.abs(targetProgress - currentProgress) > 0.001) {
+          if (!rafId) rafId = requestAnimationFrame(render);
+        }
+      };
+
+      // Helper to calculate scrollable distance correctly
+      const diffHeight = (el, winH) => Math.max(1, el.offsetHeight - winH);
+
+      const render = () => {
+        // Smooth interpolation
+        currentProgress = lerp(currentProgress, targetProgress, config.lerpFactor);
+
+        // Snap to target if very close to stop CPU usage
+        if (Math.abs(targetProgress - currentProgress) < 0.001) {
+          currentProgress = targetProgress;
+          rafId = null;
+        } else {
+          rafId = requestAnimationFrame(render);
+        }
+
+        applyVisuals(currentProgress);
+      };
+
+      const applyVisuals = (progress) => {
+        // Video Reveal Phase
+        // We want the video to be fully revealed by 60% of scroll?
+        // Let's stretch it. 1.0 means fully scrolled.
+
+        const revealPhase = clamp(progress * 1.6, 0, 1);
 
         if (video) {
-          video.style.opacity = Math.min(1, revealPhase * 1.5);
+          // Opacity
+          video.style.opacity = clamp(revealPhase * 1.8, 0, 1);
+
+          // Blur & Grayscale
           const currentBlur = config.maxBlur - revealPhase * config.maxBlur;
           const currentGray = 100 - revealPhase * 100;
-          video.style.filter = `blur(${currentBlur}px) grayscale(${currentGray}%)`;
+          video.style.filter = `blur(${currentBlur.toFixed(2)}px) grayscale(${currentGray.toFixed(0)}%)`;
+
+          // Scale & Parallax
           const currentScale = config.maxScale - revealPhase * (config.maxScale - 1.0);
           const parallaxY = progress * 100 * config.parallaxSpeed;
-          video.style.transform = `scale(${currentScale}) translateY(${parallaxY}px)`;
+          video.style.transform = `scale(${currentScale.toFixed(3)}) translateY(${parallaxY.toFixed(1)}px)`;
+
+          // Mask
           const maskSize = revealPhase * 150;
           const maskVal = getMaskString(maskSize);
           video.style.webkitMaskImage = maskVal;
@@ -267,46 +327,57 @@
         }
 
         if (poster) {
-          poster.style.opacity = Math.max(0, 0.2 - revealPhase * 0.2);
+          // Fade out poster faster
+          poster.style.opacity = clamp(0.2 - revealPhase * 0.4, 0, 0.2);
         }
 
+        // Content Reveal Phase
+        // Starts appearing after 30%
         if (content) {
           if (progress > 0.3) {
-            const contentProgress = Math.min(1, (progress - 0.3) * 2);
+            const contentProgress = clamp((progress - 0.3) * 2.5, 0, 1); // faster reveal
             content.style.opacity = contentProgress;
             content.style.transform = `translateY(${40 - contentProgress * 40}px)`;
+
+            // Pointer events
+            content.style.pointerEvents = contentProgress > 0.8 ? 'auto' : 'none';
           } else {
             content.style.opacity = 0;
             content.style.transform = `translateY(40px)`;
+            content.style.pointerEvents = 'none';
           }
         }
 
+        // Dots & UI
         if (progress < 0.33) updateDots(dots, 0);
         else if (progress < 0.66) updateDots(dots, 1);
         else updateDots(dots, 2);
 
-        if (progress < 0.05) section.classList.add('is-intro');
+        if (progress < 0.1) section.classList.add('is-intro');
         else section.classList.remove('is-intro');
-
-        rafId = null;
       };
 
       const onScroll = () => {
-        if (!rafId) {
-          rafId = requestAnimationFrame(update);
-        }
+        updateState();
       };
 
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
+              isVisible = true;
               window.addEventListener('scroll', onScroll, { passive: true });
               if (video && video.paused) video.play().catch(() => {});
-              onScroll();
+              // Kickstart
+              updateState();
             } else {
+              isVisible = false;
               window.removeEventListener('scroll', onScroll);
               if (video && !video.paused) video.pause();
+              if (rafId) {
+                cancelAnimationFrame(rafId);
+                rafId = null;
+              }
             }
           });
         },
@@ -314,16 +385,23 @@
       );
 
       observer.observe(section);
+
+      // Initial render
+      updateState();
+      render();
     };
 
     const updateDots = (dots, index) => {
+      // Optimized: only update if needed class check is handled by browser efficiently usually,
+      // but we can add a check if strict performance is needed.
       dots.forEach((dot, i) => {
-        dot.classList.toggle('active', i === index);
+        if (i === index) dot.classList.add('active');
+        else dot.classList.remove('active');
       });
     };
 
+    // Initialization logic
     document.querySelectorAll('[data-section-type="scroll-mystery"]').forEach(initSection);
-
     document.addEventListener('shopify:section:load', (e) => {
       if (e.target.dataset.sectionType === 'scroll-mystery') initSection(e.target);
     });

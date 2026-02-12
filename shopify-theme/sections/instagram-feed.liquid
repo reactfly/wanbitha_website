@@ -8,8 +8,13 @@
 
     <div class="instagram-grid">
       {%- for block in section.blocks -%}
-        <a href="{{ block.settings.link }}" target="_blank" class="instagram-item" {{ block.shopify_attributes }}>
-          <div class="instagram-item__media">
+        <a
+          href="{{ block.settings.link }}"
+          target="_blank"
+          class="instagram-item reveal stagger-{{ forloop.index }}"
+          {{ block.shopify_attributes }}
+        >
+          <div class="instagram-item__media shimmer">
             {%- if block.settings.image != blank -%}
               <img
                 src="{{ block.settings.image | image_url: width: 400, height: 400, crop: 'center' }}"
@@ -17,6 +22,7 @@
                 loading="lazy"
                 width="400"
                 height="400"
+                onload="this.parentElement.classList.remove('shimmer')"
               >
             {%- else -%}
               {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
@@ -46,12 +52,32 @@
       {%- endfor -%}
     </div>
 
-    <div class="instagram-feed__cta">
-      <a href="https://instagram.com/{{ section.settings.username }}" target="_blank" class="btn btn--primary">
+    <div class="instagram-feed__cta reveal" style="margin-top: 32px;">
+      <a
+        href="https://instagram.com/{{ section.settings.username }}"
+        target="_blank"
+        class="btn btn--primary btn--magnetic"
+      >
         Seguir no Instagram
       </a>
     </div>
   </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { rootMargin: '0px 0px -50px 0px', threshold: 0.1 }
+      );
+      document.querySelectorAll('.instagram-feed .reveal').forEach((el) => observer.observe(el));
+    });
+  </script>
 </section>
 
 {% schema %}

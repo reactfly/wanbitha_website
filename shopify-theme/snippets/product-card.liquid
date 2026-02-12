@@ -7,7 +7,7 @@
 {%- endcomment -%}
 
 <a href="{{ product.url }}" class="product-card" aria-label="{{ product.title }}">
-  <div class="product-card__image-wrapper">
+  <div class="product-card__image-wrapper shimmer">
     {%- if product.featured_image != blank -%}
       <img
         class="product-card__image"
@@ -16,21 +16,22 @@
         width="300"
         height="400"
         loading="lazy"
+        onload="this.parentElement.classList.remove('shimmer')"
       >
     {%- else -%}
       {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg product-card__image' }}
     {%- endif -%}
 
     <div class="product-card__overlay">
-      <span class="btn btn--white" style="font-size: 0.75rem; padding: 10px 20px;">
-        Ver Obra
-      </span>
+      <span class="btn btn--white" style="font-size: 0.75rem; padding: 10px 20px;"> Ver Obra </span>
     </div>
 
     {%- if product.available == false -%}
-      <span class="product-card__badge" style="background: var(--text-faint);">Vendido</span>
+      <span class="product-card__badge" style="background: var(--text-faint);">Esgotado</span>
     {%- elsif product.compare_at_price > product.price -%}
-      <span class="product-card__badge">Promoção</span>
+      <span class="product-card__badge">Oferta</span>
+    {%- elsif product.tags contains 'new' -%}
+      <span class="product-card__badge" style="background: var(--color-lavender-deep);">Novo</span>
     {%- endif -%}
   </div>
 
@@ -39,11 +40,11 @@
       <p class="product-card__vendor">{{ product.vendor }}</p>
     {%- endif -%}
     <h3 class="product-card__title">{{ product.title }}</h3>
-    <p class="product-card__price">
+    <div class="product-card__price">
       {{ product.price | money }}
       {%- if product.compare_at_price > product.price -%}
         <span class="product-card__price--compare">{{ product.compare_at_price | money }}</span>
       {%- endif -%}
-    </p>
+    </div>
   </div>
 </a>

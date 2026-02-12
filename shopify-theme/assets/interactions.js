@@ -6,14 +6,15 @@
 
   /* ─── Initialize Lenis (Smooth Scroll) ─── */
   const lenis = new Lenis({
-    duration: 1.2,
+    duration: 1.4,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     direction: 'vertical',
     gestureDirection: 'vertical',
     smooth: true,
-    mouseMultiplier: 1,
+    mouseMultiplier: 0.9,
     smoothTouch: false,
     touchMultiplier: 2,
+    infinite: false,
   });
 
   function raf(time) {
@@ -152,14 +153,16 @@
       }
     });
 
-    /* ─── Stardust Cursor Trail ─── */
-    const createStardust = (x, y) => {
+    /* ─── Stardust Cursor Trail (Enhanced) ─── */
+    const starColors = ['#ff0080', '#c084fc', '#22d3ee', '#fbbf24'];
+    const createStardust = (x, y, vx, vy) => {
       const particle = document.createElement('div');
       particle.className = 'stardust-particle';
       document.body.appendChild(particle);
       
-      const size = Math.random() * 4 + 2;
-      const color = Math.random() > 0.5 ? 'var(--color-rose-hot)' : 'var(--color-lavender)';
+      const size = Math.random() * 5 + 1.5;
+      const color = starColors[Math.floor(Math.random() * starColors.length)];
+      const spread = 40 + Math.abs(vx + vy) * 2;
       
       gsap.set(particle, {
         x: x,
@@ -171,28 +174,32 @@
         position: 'fixed',
         pointerEvents: 'none',
         zIndex: 9998,
-        boxShadow: `0 0 ${size * 2}px ${color}`
+        boxShadow: `0 0 ${size * 3}px ${color}, 0 0 ${size * 6}px ${color}40`
       });
 
       gsap.to(particle, {
-        x: x + (Math.random() - 0.5) * 50,
-        y: y + (Math.random() - 0.5) * 50,
+        x: x + (Math.random() - 0.5) * spread - vx * 0.5,
+        y: y + (Math.random() - 0.5) * spread - vy * 0.5 + 20,
         opacity: 0,
         scale: 0,
-        duration: 1 + Math.random(),
-        ease: 'power2.out',
+        duration: 0.8 + Math.random() * 0.6,
+        ease: 'power3.out',
         onComplete: () => particle.remove()
       });
     };
 
-    // Throttle particle creation
-    let lastTime = 0;
+    // Throttle particle creation with velocity tracking
+    let lastTime = 0, lastMX = 0, lastMY = 0;
     window.addEventListener('mousemove', (e) => {
       const now = Date.now();
-      if (now - lastTime > 40) { // Limit frequency
-        createStardust(e.clientX, e.clientY);
+      const vx = e.clientX - lastMX;
+      const vy = e.clientY - lastMY;
+      if (now - lastTime > 35) {
+        createStardust(e.clientX, e.clientY, vx, vy);
         lastTime = now;
       }
+      lastMX = e.clientX;
+      lastMY = e.clientY;
     });
 
     // Velocity Warp Effect (Existing Logic kept simple)
@@ -248,20 +255,21 @@
         const xAttr = (e.clientX - rect.left) / rect.width;
         const yAttr = (e.clientY - rect.top) / rect.height;
         
-        // Tilt
+        // Tilt with enhanced perspective
         gsap.to(card, {
-          rotateY: (xAttr - 0.5) * 10,
-          rotateX: (0.5 - yAttr) * 10,
-          transformPerspective: 800,
-          translateY: -5,
-          duration: 0.5,
-          ease: 'power2.out'
+          rotateY: (xAttr - 0.5) * 12,
+          rotateX: (0.5 - yAttr) * 12,
+          transformPerspective: 900,
+          translateY: -8,
+          duration: 0.4,
+          ease: 'power2.out',
+          overwrite: 'auto'
         });
 
-        // Shine
+        // Shine with gradient color
         const shine = card.querySelector('.product-card__shine');
         if (shine) {
-          shine.style.background = `radial-gradient(circle at ${xAttr * 100}% ${yAttr * 100}%, rgba(255,255,255,0.15) 0%, transparent 60%)`;
+          shine.style.background = `radial-gradient(circle at ${xAttr * 100}% ${yAttr * 100}%, rgba(255,0,128,0.08) 0%, rgba(192,132,252,0.04) 40%, transparent 70%)`;
         }
       });
 
@@ -270,11 +278,12 @@
           rotateY: 0,
           rotateX: 0,
           translateY: 0,
-          duration: 0.8,
-          ease: 'elastic.out(1, 0.5)'
+          duration: 1,
+          ease: 'elastic.out(1, 0.4)',
+          overwrite: 'auto'
         });
         const shine = card.querySelector('.product-card__shine');
-        if (shine) shine.style.background = 'transparent';
+        if (shine) gsap.to(shine, { opacity: 0, duration: 0.3, onComplete: () => { shine.style.background = 'transparent'; gsap.set(shine, {opacity: 1}); } });
       });
     });
   }
@@ -302,13 +311,15 @@
   /* ─── Section Parallax & Reveals ─── */
   // Product Cards Stagger
   ScrollTrigger.batch(".product-card", {
-    start: "top 90%",
+    start: "top 92%",
     onEnter: batch => gsap.from(batch, {
-      y: 60,
+      y: 80,
       opacity: 0,
-      stagger: 0.1,
-      duration: 1.2,
-      ease: "power3.out"
+      scale: 0.95,
+      stagger: 0.08,
+      duration: 1.4,
+      ease: "power4.out",
+      clearProps: 'scale'
     })
   });
 
@@ -334,37 +345,55 @@
   /* ─── Mouse Parallax on Hero ─── */
   const heroContent = document.querySelector('.hero__content');
   if (heroContent) {
+    const heroParticles = document.querySelector('.hero__particles');
     document.addEventListener('mousemove', e => {
       const cx = (e.clientX / window.innerWidth - 0.5);
       const cy = (e.clientY / window.innerHeight - 0.5);
       gsap.to(heroContent, {
-        x: cx * -30,
-        y: cy * -20,
-        duration: 1,
+        x: cx * -25,
+        y: cy * -15,
+        duration: 1.2,
         ease: 'power2.out'
       });
+      if (heroParticles) {
+        gsap.to(heroParticles, {
+          x: cx * 15,
+          y: cy * 10,
+          duration: 2,
+          ease: 'power1.out'
+        });
+      }
     });
   }
 
-  /* ─── Shooting Star Logic (Vanilla JS is fine here) ─── */
-  // Kept from previous version, integrated
+  /* ─── Shooting Star Logic (Enhanced) ─── */
   const universeContainer = document.querySelector('.universe-bg');
   if (universeContainer) {
+    const shootingStarColors = ['#fff', '#ff0080', '#c084fc', '#22d3ee'];
     const spawnShootingStar = () => {
       const star = document.createElement('div');
       star.className = 'shooting-star';
-      star.style.top = `${Math.random() * window.innerHeight * 0.6}px`;
+      star.style.top = `${Math.random() * window.innerHeight * 0.5}px`;
       star.style.left = `${Math.random() * window.innerWidth + 200}px`;
+      
+      const color = shootingStarColors[Math.floor(Math.random() * shootingStarColors.length)];
+      const size = 2 + Math.random() * 4;
+      star.style.width = size + 'px';
+      star.style.height = size + 'px';
+      star.style.background = color;
+      star.style.boxShadow = `0 0 ${size}px ${color}, 0 0 ${size * 4}px ${color}80`;
+      
       universeContainer.appendChild(star);
       
-      // Animate with GSAP for consistency
       gsap.fromTo(star, 
         { x: 0, opacity: 1, rotation: 315 },
-        { x: -1500, opacity: 0, duration: 2.5, ease: 'none', onComplete: () => star.remove() }
+        { x: -1800 - Math.random() * 600, opacity: 0, duration: 2 + Math.random() * 1.5, ease: 'power1.in', onComplete: () => star.remove() }
       );
-      setTimeout(spawnShootingStar, Math.random() * 4000 + 2000);
+      
+      const delay = Math.random() * 5000 + 3000;
+      setTimeout(spawnShootingStar, delay);
     };
-    setTimeout(spawnShootingStar, 2000);
+    setTimeout(spawnShootingStar, 2500);
   }
 
   /* ─── Zoom Gallery Parallax ─── */
@@ -555,37 +584,53 @@
       scrollTrigger: {
         trigger: horizSection,
         start: "top top",
-        end: () => `+=${getScrollAmount() * -1}`, // Scroll length related to width
+        end: () => `+=${getScrollAmount() * -1}`,
         pin: true,
-        scrub: 1,
+        scrub: 0.8,
         invalidateOnRefresh: true,
         anticipatePin: 1
       }
     });
 
-    // Parallax inside horizontal cards on horizontal move?
-    // Let's keep it simple first.
+    /* Stagger-reveal horizontal cards as they enter */
+    const hCards = horizSection.querySelectorAll('.horizontal-card');
+    hCards.forEach(card => {
+      gsap.from(card, {
+        opacity: 0,
+        y: 40,
+        scale: 0.92,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: card,
+          containerAnimation: null,
+          start: 'left 90%',
+          toggleActions: 'play none none reverse',
+          horizontal: true
+        }
+      });
+    });
   }
 
-  /* ─── Text Reveal (Scrollytelling) ─── */
+  /* ─── Text Reveal (Scrollytelling — Enhanced) ─── */
   const revealTexts = document.querySelectorAll('[data-reveal-text]');
   revealTexts.forEach(el => {
-    // Split text
     const text = el.innerText;
     el.innerHTML = text.split(/\s+/).map(word => `<span class="reveal-word">${word}</span>`).join(' ');
 
     const words = el.querySelectorAll('.reveal-word');
     
     gsap.fromTo(words, 
-      { backgroundPosition: "100% 0" },
+      { backgroundPosition: "100% 0", opacity: 0.15 },
       { 
         backgroundPosition: "0 0",
-        stagger: 0.1,
+        opacity: 1,
+        stagger: 0.06,
         scrollTrigger: {
           trigger: el,
-          start: "top 80%",
-          end: "bottom 40%",
-          scrub: 1
+          start: "top 82%",
+          end: "bottom 35%",
+          scrub: 0.8
         }
       }
     );

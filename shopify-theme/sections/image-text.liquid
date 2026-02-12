@@ -3,8 +3,9 @@
     <div class="image-text__grid{% if section.settings.reverse_layout %} is-reversed{% endif %}">
       {%- comment -%} Image Side {%- endcomment -%}
       <div
-        class="image-text__media reveal-{% if section.settings.reverse_layout %}right{% else %}left{% endif %}"
+        class="image-text__media reveal-{% if section.settings.reverse_layout %}right{% else %}left{% endif %} shimmer"
         data-reveal-image
+        data-parallax="0.1"
       >
         {%- if section.settings.image != blank -%}
           <img
@@ -13,6 +14,8 @@
             loading="lazy"
             width="400"
             height="500"
+            onload="this.parentElement.classList.remove('shimmer')"
+            style="will-change: transform;"
           >
         {%- else -%}
           {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
@@ -22,24 +25,24 @@
       {%- comment -%} Text Side {%- endcomment -%}
       <div class="image-text__content">
         {%- if section.settings.label != blank -%}
-          <span class="label-tag reveal">{{ section.settings.label }}</span>
+          <span class="label-tag reveal stagger-1">{{ section.settings.label }}</span>
         {%- endif -%}
 
         <h2
-          class="heading-display heading-display--lg {% if section.settings.gradient_title %}text-gradient{% endif %}"
+          class="heading-display heading-display--lg {% if section.settings.gradient_title %}text-gradient{% endif %} reveal stagger-2"
           data-split-text
         >
           {{ section.settings.heading }}
         </h2>
 
         {%- if section.settings.body != blank -%}
-          <div class="text-editorial reveal" style="font-size:1.05rem;line-height:1.8;">
+          <div class="text-editorial reveal stagger-3" style="font-size:1.05rem;line-height:1.8;">
             {{ section.settings.body }}
           </div>
         {%- endif -%}
 
         {%- if section.settings.show_stats -%}
-          <div class="image-text__stats reveal">
+          <div class="image-text__stats reveal stagger-4">
             {%- for block in section.blocks -%}
               <div {{ block.shopify_attributes }}>
                 <div
@@ -56,8 +59,11 @@
         {%- endif -%}
 
         {%- if section.settings.button_text != blank -%}
-          <div class="reveal" style="margin-top:12px;">
-            <a href="{{ section.settings.button_url }}" class="btn btn--{{ section.settings.button_style }}">
+          <div class="reveal stagger-5" style="margin-top:12px;">
+            <a
+              href="{{ section.settings.button_url }}"
+              class="btn btn--{{ section.settings.button_style }} btn--magnetic"
+            >
               {{ section.settings.button_text }}
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -68,6 +74,45 @@
       </div>
     </div>
   </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Parallax for image
+      document.querySelectorAll('.image-text__media[data-parallax]').forEach((media) => {
+        window.addEventListener(
+          'scroll',
+          () => {
+            const scrolled = window.scrollY;
+            const rect = media.getBoundingClientRect();
+            if (rect.top < window.innerHeight && rect.bottom > 0) {
+              const speed = 0.05;
+              const yPos = (scrolled - rect.top) * speed;
+              const img = media.querySelector('img');
+              if (img) img.style.transform = `scale(1.1) translateY(${yPos}px)`;
+            }
+          },
+          { passive: true }
+        );
+      });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              if (entry.target.hasAttribute('data-reveal-image')) {
+                entry.target.classList.add('image-revealed');
+              }
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { rootMargin: '0px 0px -50px 0px', threshold: 0.1 }
+      );
+      document
+        .querySelectorAll('.image-text .reveal, .image-text .reveal-left, .image-text .reveal-right')
+        .forEach((el) => observer.observe(el));
+    });
+  </script>
 </section>
 
 {% schema %}

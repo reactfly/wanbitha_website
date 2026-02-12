@@ -19,13 +19,14 @@
     let cx = 0, cy = 0, tx = 0, ty = 0;
     document.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
     (function loop() {
-      cx += (tx - cx) * 0.15;
-      cy += (ty - cy) * 0.15;
+      cx += (tx - cx) * 0.10;
+      cy += (ty - cy) * 0.10;
       cursor.style.left = cx + 'px';
       cursor.style.top = cy + 'px';
       requestAnimationFrame(loop);
     })();
-    document.querySelectorAll('a, button, [role="button"], .product-card, input, textarea, select').forEach(el => {
+    const hoverTargets = 'a, button, [role="button"], .product-card, input, textarea, select, .zoom-gallery__item, .instagram-item';
+    document.querySelectorAll(hoverTargets).forEach(el => {
       el.addEventListener('mouseenter', () => cursor.classList.add('is-hovering'));
       el.addEventListener('mouseleave', () => cursor.classList.remove('is-hovering'));
     });
@@ -50,14 +51,22 @@
     });
   }
 
-  /* ─── Header Scroll ─── */
+  /* ─── Header Scroll (with hide-on-scroll-down) ─── */
   const header = document.querySelector('.site-header');
   if (header) {
+    let lastScrollY = 0;
     let ticking = false;
     window.addEventListener('scroll', () => {
       if (!ticking) {
         requestAnimationFrame(() => {
-          header.classList.toggle('is-scrolled', window.scrollY > 50);
+          const scrollY = window.scrollY;
+          header.classList.toggle('is-scrolled', scrollY > 50);
+          if (scrollY > 300 && scrollY > lastScrollY) {
+            header.style.transform = 'translateY(-100%)';
+          } else {
+            header.style.transform = 'translateY(0)';
+          }
+          lastScrollY = scrollY;
           ticking = false;
         });
         ticking = true;
@@ -133,20 +142,24 @@
     }, { passive: true });
   }
 
-  /* ─── Counter Animation ─── */
+  /* ─── Counter Animation (with easeOut) ─── */
   document.querySelectorAll('[data-count]').forEach(el => {
     const obs = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           const target = parseInt(el.dataset.count);
           const suffix = el.dataset.suffix || '';
-          let current = 0;
-          const step = Math.ceil(target / 60);
-          const timer = setInterval(() => {
-            current += step;
-            if (current >= target) { current = target; clearInterval(timer); }
+          const duration = 1800;
+          const start = performance.now();
+          function animate(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 4);
+            const current = Math.round(eased * target);
             el.textContent = current + suffix;
-          }, 25);
+            if (progress < 1) requestAnimationFrame(animate);
+          }
+          requestAnimationFrame(animate);
           obs.unobserve(el);
         }
       });
@@ -170,13 +183,13 @@
   const twData = document.getElementById('heroTypewriterPhrases');
   if (twEl && twData) {
     let phrases;
-    try { phrases = JSON.parse(twData.textContent); } catch(e) { phrases = []; }
+    try { phrases = JSON.parse(twData.textContent); } catch { phrases = []; }
     if (phrases.length === 0) phrases = ['A Arte de Sentir em Cores e Texturas'];
 
-    const TYPE_SPEED = 70;
-    const ERASE_SPEED = 35;
-    const HOLD_DURATION = 2200;
-    const PAUSE_BEFORE_TYPE = 500;
+    const TYPE_SPEED = 65;
+    const ERASE_SPEED = 30;
+    const HOLD_DURATION = 2500;
+    const PAUSE_BEFORE_TYPE = 400;
     let phraseIdx = 0;
     let charIdx = 0;
     let isErasing = false;

@@ -70,7 +70,7 @@
       </div>
     {%- endif -%}
 
-    <h1 class="hero__title heading-display heading-display--xl text-gradient">
+    <h1 class="hero__title heading-display heading-display--xl text-gradient" id="heroTitle">
       {{ section.settings.heading }}
     </h1>
 
@@ -99,7 +99,7 @@
 
     <div class="hero__cta">
       {%- if section.settings.button_text != blank -%}
-        <a href="{{ section.settings.button_url }}" class="btn btn--primary">
+        <a href="{{ section.settings.button_url }}" class="btn btn--primary btn--magnetic">
           {{ section.settings.button_text }}
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -107,16 +107,59 @@
         </a>
       {%- endif -%}
       {%- if section.settings.button_text_2 != blank -%}
-        <a href="{{ section.settings.button_url_2 }}" class="btn btn--glass">{{ section.settings.button_text_2 }}</a>
+        <a href="{{ section.settings.button_url_2 }}" class="btn btn--glass btn--magnetic">
+          {{- section.settings.button_text_2 -}}
+        </a>
       {%- endif -%}
     </div>
   </div>
 
   {%- comment -%} Scroll Indicator {%- endcomment -%}
-  <div class="hero__scroll-indicator">
+  <div
+    class="hero__scroll-indicator"
+    onclick="window.scrollTo({top: window.innerHeight, behavior: 'smooth'})"
+    style="cursor: pointer;"
+  >
     <span>scroll</span>
     <div class="hero__scroll-line"></div>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Split Text Animation
+      const title = document.getElementById('heroTitle');
+      if (title) {
+        const text = title.textContent.trim();
+        title.innerHTML = '';
+        text.split(' ').forEach((word, index) => {
+          const span = document.createElement('span');
+          span.className = 'split-word';
+          span.innerHTML = `<span class="split-word__inner" style="transition-delay: ${
+            0.2 + index * 0.1
+          }s">${word}&nbsp;</span>`;
+          title.appendChild(span);
+        });
+        setTimeout(() => title.classList.add('split-text-visible'), 100);
+      }
+
+      // Parallax & magnetic buttons are handled in theme.js generally,
+      // but we add specific hero parallax here for the background
+      const heroBg = document.querySelector('.hero__video-bg');
+      if (heroBg) {
+        window.addEventListener(
+          'scroll',
+          () => {
+            const scrolled = window.scrollY;
+            if (scrolled < window.innerHeight) {
+              heroBg.style.transform = `scale(${1 + scrolled * 0.0005}) translateY(${scrolled * 0.2}px)`;
+              heroBg.style.opacity = 1 - scrolled * 0.0015;
+            }
+          },
+          { passive: true }
+        );
+      }
+    });
+  </script>
 </section>
 
 {% schema %}
