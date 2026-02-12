@@ -14,7 +14,21 @@
 >
   <div class="scroll-mystery__sticky-container">
     <div class="scroll-mystery__video-wrapper">
-      {%- if section.settings.video_url != blank -%}
+      {%- if section.settings.video_file != blank -%}
+        {{
+          section.settings.video_file
+          | video_tag:
+            image_size: '2000x',
+            autoplay: true,
+            loop: true,
+            muted: true,
+            controls: false,
+            class: 'scroll-mystery__video',
+            preload: 'auto',
+            playsinline: true
+        }}
+      {%- elsif section.settings.video_url != blank -%}
+        <!-- Fallback for external URL if needed, though video_tag is preferred -->
         <video
           class="scroll-mystery__video"
           src="{{ section.settings.video_url }}"
@@ -96,11 +110,8 @@
     height: 100%;
     object-fit: cover;
     opacity: 0;
-    /* Blur and Scale initial values will be set by JS based on data attributes,
-       but we keep defaults here to avoid FOUC */
     filter: blur(20px) grayscale(100%);
     transform: scale(1.2);
-    /* Mystery Reveal Mask */
     -webkit-mask-image: radial-gradient(circle at center, black 0%, transparent 0%);
     mask-image: radial-gradient(circle at center, black 0%, transparent 0%);
     will-change: opacity, filter, transform, mask-image;
@@ -115,7 +126,6 @@
     opacity: var(--overlay-opacity, 0.8);
   }
 
-  /* Poster Image Fallback */
   .scroll-mystery__poster {
     position: absolute;
     inset: 0;
@@ -224,7 +234,6 @@
       const dots = section.querySelectorAll('.scroll-mystery__dot');
       const content = section.querySelector('.scroll-mystery__content');
 
-      // Configuration from data attributes
       const config = {
         parallaxSpeed: parseFloat(section.dataset.parallax || 0.5),
         maxBlur: parseInt(section.dataset.blur || 20),
@@ -241,31 +250,16 @@
         let progress = (rect.top * -1) / totalDist;
         progress = Math.max(0, Math.min(1, progress));
 
-        // --- Animation Logic ---
-
-        // 1. Reveal Phase (0% to 60% of scroll)
         const revealPhase = Math.min(1, progress * 1.6);
 
         if (video) {
-          // Opacity
           video.style.opacity = Math.min(1, revealPhase * 1.5);
-
-          // Blur: maxBlur -> 0px
           const currentBlur = config.maxBlur - revealPhase * config.maxBlur;
-          // Grayscale: 100% -> 0%
           const currentGray = 100 - revealPhase * 100;
           video.style.filter = `blur(${currentBlur}px) grayscale(${currentGray}%)`;
-
-          // Scale: maxScale -> 1.0 (Zoom Out effect)
           const currentScale = config.maxScale - revealPhase * (config.maxScale - 1.0);
-
-          // Parallax Y movement: move video slightly down as we scroll
-          // We use progress for the parallax offset
           const parallaxY = progress * 100 * config.parallaxSpeed;
-
           video.style.transform = `scale(${currentScale}) translateY(${parallaxY}px)`;
-
-          // Mask Expand
           const maskSize = revealPhase * 150;
           const maskVal = getMaskString(maskSize);
           video.style.webkitMaskImage = maskVal;
@@ -280,7 +274,6 @@
           if (progress > 0.3) {
             const contentProgress = Math.min(1, (progress - 0.3) * 2);
             content.style.opacity = contentProgress;
-            // Parallax on content too? Maybe a little bit
             content.style.transform = `translateY(${40 - contentProgress * 40}px)`;
           } else {
             content.style.opacity = 0;
@@ -342,10 +335,16 @@
   "name": "Scroll Video (Mystery)",
   "settings": [
     {
+      "type": "video",
+      "id": "video_file",
+      "label": "Video File (Shopify Hosted)",
+      "info": "Upload a video directly to Shopify Files. Recommended for best performance."
+    },
+    {
       "type": "text",
       "id": "video_url",
-      "label": "Video URL (MP4)",
-      "info": "Direct link to MP4/WebM file. Required for video effect."
+      "label": "Video URL (External)",
+      "info": "Optional. Fallback to external MP4 URL if no file is uploaded above."
     },
     {
       "type": "image_picker",
