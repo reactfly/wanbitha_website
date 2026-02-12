@@ -1,0 +1,62 @@
+<header class="site-header" role="banner">
+  <div class="container">
+    <div class="site-header__inner">
+      <a href="/" class="site-header__logo" aria-label="{{ shop.name }}">
+        {%- if section.settings.logo != blank -%}
+          <img
+            src="{{ section.settings.logo | image_url: width: 200 }}"
+            alt="{{ shop.name }}"
+            width="120"
+            height="40"
+            loading="eager"
+          >
+        {%- else -%}
+          <span>{{ shop.name }}</span>
+        {%- endif -%}
+      </a>
+
+      <button class="mobile-toggle" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="site-header__nav" role="navigation" aria-label="Principal">
+        {%- for link in section.settings.menu.links -%}
+          <a href="{{ link.url }}" class="site-header__link{% if link.active %} is-active{% endif %}">
+            {{ link.title }}
+          </a>
+        {%- endfor -%}
+
+        <a href="{{ routes.cart_url }}" class="site-header__cart" aria-label="Carrinho">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 01-8 0"></path>
+          </svg>
+          {%- if cart.item_count > 0 -%}
+            <span class="site-header__cart-count">{{ cart.item_count }}</span>
+          {%- endif -%}
+        </a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Cabeçalho",
+  "class": "section-header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "default": "main-menu",
+      "label": "Menu de navegação"
+    }
+  ]
+}
+{% endschema %}

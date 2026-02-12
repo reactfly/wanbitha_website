@@ -1,0 +1,30 @@
+<section class="scroll-reveal-text section-spacing" data-reveal-section>
+  <div class="container">
+    <div class="scroll-reveal__wrapper">
+      <h2 class="heading-display heading-display--lg" data-reveal-text>
+        {{ section.settings.text }}
+      </h2>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Manifesto (Reveal)",
+  "tag": "section",
+  "class": "section-reveal-text",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Texto Principal",
+      "default": "Não é apenas arte.\nÉ uma experiência que respira,\numa cor que vibra,\numa emoção que transforma o espaço."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Manifesto (Texto que Acende)"
+    }
+  ]
+}
+{% endschema %}

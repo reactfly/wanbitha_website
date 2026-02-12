@@ -1,0 +1,13 @@
+{
+  "type": "header",
+  "name": "Cabeçalho",
+  "sections": {
+    "header": {
+      "type": "header",
+      "settings": {
+        "menu": "main-menu"
+      }
+    }
+  },
+  "order": ["header"]
+}

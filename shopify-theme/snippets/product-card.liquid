@@ -1,0 +1,49 @@
+{%- comment -%}
+  Renders a product card.
+  Accepts:
+  - product: {Object} Product Liquid object
+  Usage:
+  {% render 'product-card', product: product %}
+{%- endcomment -%}
+
+<a href="{{ product.url }}" class="product-card" aria-label="{{ product.title }}">
+  <div class="product-card__image-wrapper">
+    {%- if product.featured_image != blank -%}
+      <img
+        class="product-card__image"
+        src="{{ product.featured_image | image_url: width: 600 }}"
+        alt="{{ product.featured_image.alt | default: product.title | escape }}"
+        width="300"
+        height="400"
+        loading="lazy"
+      >
+    {%- else -%}
+      {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg product-card__image' }}
+    {%- endif -%}
+
+    <div class="product-card__overlay">
+      <span class="btn btn--white" style="font-size: 0.75rem; padding: 10px 20px;">
+        Ver Obra
+      </span>
+    </div>
+
+    {%- if product.available == false -%}
+      <span class="product-card__badge" style="background: var(--text-faint);">Vendido</span>
+    {%- elsif product.compare_at_price > product.price -%}
+      <span class="product-card__badge">Promoção</span>
+    {%- endif -%}
+  </div>
+
+  <div class="product-card__info">
+    {%- if product.vendor != blank -%}
+      <p class="product-card__vendor">{{ product.vendor }}</p>
+    {%- endif -%}
+    <h3 class="product-card__title">{{ product.title }}</h3>
+    <p class="product-card__price">
+      {{ product.price | money }}
+      {%- if product.compare_at_price > product.price -%}
+        <span class="product-card__price--compare">{{ product.compare_at_price | money }}</span>
+      {%- endif -%}
+    </p>
+  </div>
+</a>

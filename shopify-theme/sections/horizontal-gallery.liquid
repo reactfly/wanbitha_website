@@ -1,0 +1,76 @@
+<div class="horizontal-scroll-section" data-horizontal-scroll>
+  <div class="horizontal-scroll__wrapper">
+    <div class="horizontal-scroll__track">
+      <div class="horizontal-scroll__intro">
+        <h2 class="heading-display text-gradient">{{ section.settings.heading }}</h2>
+        <p class="body-text">{{ section.settings.description }}</p>
+      </div>
+
+      {%- for block in section.blocks -%}
+        <div class="horizontal-card" {{ block.shopify_attributes }}>
+          <div class="horizontal-card__media">
+            {%- if block.settings.image != blank -%}
+              <img
+                src="{{ block.settings.image | image_url: width: 600 }}"
+                alt="{{ block.settings.heading }}"
+                loading="lazy"
+                width="400"
+                height="500"
+              >
+            {%- else -%}
+              {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+            <span class="horizontal-card__number">0{{ forloop.index }}</span>
+          </div>
+          <div class="horizontal-card__content">
+            <h3 class="heading-lg">{{ block.settings.heading }}</h3>
+            <p>{{ block.settings.text }}</p>
+          </div>
+        </div>
+      {%- endfor -%}
+
+      <div class="horizontal-scroll__outro">
+        <h3 class="heading-display">Explorar</h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Jornada (Scroll)",
+  "tag": "section",
+  "class": "section-horizontal",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Título", "default": "Nossa Jornada" },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Descrição",
+      "default": "Descubra o processo criativo por trás de cada coleção."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Imagem" },
+        { "type": "text", "id": "heading", "label": "Título", "default": "Inspiração" },
+        { "type": "textarea", "id": "text", "label": "Texto", "default": "Tudo começa com uma faísca..." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Scroll Horizontal",
+      "blocks": [
+        { "type": "card", "settings": { "heading": "Gênese" } },
+        { "type": "card", "settings": { "heading": "Caos" } },
+        { "type": "card", "settings": { "heading": "Forma" } },
+        { "type": "card", "settings": { "heading": "Eternidade" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

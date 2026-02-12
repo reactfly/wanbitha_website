@@ -1,0 +1,80 @@
+<section class="cart-page">
+  <div class="container">
+    <div class="cart-page__header" data-animate>
+      <span class="label-tag mb-12" style="display: block;">Seu Carrinho</span>
+      <h1 class="heading-display heading-display--lg text-gradient">Carrinho</h1>
+    </div>
+
+    {%- if cart.item_count > 0 -%}
+      <form action="{{ routes.cart_url }}" method="post">
+        <table class="cart-table">
+          <thead>
+            <tr>
+              <th>Obra</th>
+              <th>Preço</th>
+              <th>Qtd</th>
+              <th style="text-align: right;">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {%- for item in cart.items -%}
+              <tr>
+                <td>
+                  <div class="cart-item">
+                    <div class="cart-item__image">
+                      {%- if item.image != blank -%}
+                        <img src="{{ item.image | image_url: width: 160 }}" alt="{{ item.title }}">
+                      {%- endif -%}
+                    </div>
+                    <div>
+                      <p class="cart-item__title">{{ item.product.title }}</p>
+                      {%- unless item.variant.title == 'Default Title' -%}
+                        <p style="font-size: 0.8rem; color: var(--text-faint);">{{ item.variant.title }}</p>
+                      {%- endunless -%}
+                    </div>
+                  </div>
+                </td>
+                <td>{{ item.price | money }}</td>
+                <td>
+                  <input
+                    type="number"
+                    name="updates[]"
+                    value="{{ item.quantity }}"
+                    min="0"
+                    class="product-form__qty-input"
+                    aria-label="Quantidade"
+                  >
+                </td>
+                <td style="text-align: right;">{{ item.line_price | money }}</td>
+              </tr>
+            {%- endfor -%}
+          </tbody>
+        </table>
+
+        <div class="cart-subtotal">
+          <span>Subtotal:</span> {{ cart.total_price | money }}
+        </div>
+
+        <div style="text-align: right;">
+          <button type="submit" name="update" class="btn btn--glass" style="margin-right: 12px;">Atualizar</button>
+          <button type="submit" name="checkout" class="btn btn--primary">Finalizar Compra</button>
+        </div>
+      </form>
+    {%- else -%}
+      <div class="text-center" style="padding: 80px 0;">
+        <p class="text-editorial" style="font-size: 1.25rem; margin-bottom: 24px;">
+          Seu carrinho está vazio
+        </p>
+        <a href="{{ routes.collections_url }}" class="btn btn--primary">Explorar Galeria</a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Carrinho",
+  "tag": "section",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,159 @@
+<section class="hero">
+  <div class="hero__bg">
+    {%- if section.settings.video_bg != blank -%}
+      {{
+        section.settings.video_bg
+        | video_tag:
+          autoplay: true,
+          loop: true,
+          muted: true,
+          playsinline: true,
+          controls: false,
+          class: 'hero__video-bg'
+      }}
+      <div class="hero__overlay"></div>
+    {%- elsif section.settings.mp4_url != blank -%}
+      <video src="{{ section.settings.mp4_url }}" autoplay loop muted playsinline class="hero__video-bg"></video>
+      <div class="hero__overlay"></div>
+    {%- elsif section.settings.external_video_url != blank -%}
+      <div class="hero__video-wrapper" style="position: absolute; inset: 0; pointer-events: none; overflow: hidden;">
+        {%- if section.settings.external_video_url.type == 'youtube' -%}
+          <iframe
+            src="https://www.youtube.com/embed/{{ section.settings.external_video_url.id }}?autoplay=1&mute=1&loop=1&playlist={{ section.settings.external_video_url.id }}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&origin={{ shop.url }}"
+            allow="autoplay; encrypted-media"
+            class="hero__iframe-bg"
+            style="position: absolute; top: 50%; left: 50%; width: 300%; height: 300%; transform: translate(-50%, -50%); border: 0;"
+          ></iframe>
+        {%- elsif section.settings.external_video_url.type == 'vimeo' -%}
+          <iframe
+            src="https://player.vimeo.com/video/{{ section.settings.external_video_url.id }}?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1"
+            allow="autoplay; encrypted-media"
+            class="hero__iframe-bg"
+            style="position: absolute; top: 50%; left: 50%; width: 300%; height: 300%; transform: translate(-50%, -50%); border: 0;"
+          ></iframe>
+        {%- endif -%}
+      </div>
+      <div class="hero__overlay"></div>
+    {%- elsif section.settings.image != blank -%}
+      <img
+        src="{{ section.settings.image | image_url: width: 1920 }}"
+        alt="{{ section.settings.image.alt | default: section.settings.heading }}"
+        loading="eager"
+        fetchpriority="high"
+        width="1920"
+        height="1080"
+      >
+      <div class="hero__overlay"></div>
+    {%- else -%}
+      <div
+        class="hero__overlay"
+        style="background:radial-gradient(ellipse at 30% 50%,var(--color-bg-elevated) 0%,var(--color-bg-primary) 70%);"
+      ></div>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Floating Particles {%- endcomment -%}
+  <div class="hero__particles" aria-hidden="true">
+    <div class="hero__particle"></div>
+    <div class="hero__particle"></div>
+    <div class="hero__particle"></div>
+    <div class="hero__particle"></div>
+    <div class="hero__particle"></div>
+    <div class="hero__particle"></div>
+  </div>
+
+  <div class="hero__content">
+    {%- if section.settings.badge != blank -%}
+      <div class="hero__badge">
+        <span class="hero__badge-dot"></span>
+        <span class="label-tag" style="color:var(--text-secondary);">{{ section.settings.badge }}</span>
+      </div>
+    {%- endif -%}
+
+    <h1 class="hero__title heading-display heading-display--xl text-gradient">
+      {{ section.settings.heading }}
+    </h1>
+
+    {%- comment -%} Typewriter Subtitle {%- endcomment -%}
+    <div class="hero__typewriter" style="animation-delay:0.5s;">
+      <span class="hero__typewriter-text" id="heroTypewriter"></span>
+      <span class="hero__typewriter-cursor" aria-hidden="true"></span>
+    </div>
+
+    {%- comment -%} Inject phrases as JSON for JS {%- endcomment -%}
+    <script type="application/json" id="heroTypewriterPhrases">
+      [
+        {%- for i in (1..5) -%}
+          {%- assign phrase_key = 'phrase_' | append: i -%}
+          {%- assign phrase = section.settings[phrase_key] -%}
+          {%- if phrase != blank -%}
+            {{ phrase | json }}{% unless forloop.last %},{% endunless %}
+          {%- endif -%}
+        {%- endfor -%}
+      ]
+    </script>
+
+    {%- if section.settings.description != blank -%}
+      <p class="hero__description">{{ section.settings.description }}</p>
+    {%- endif -%}
+
+    <div class="hero__cta">
+      {%- if section.settings.button_text != blank -%}
+        <a href="{{ section.settings.button_url }}" class="btn btn--primary">
+          {{ section.settings.button_text }}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      {%- endif -%}
+      {%- if section.settings.button_text_2 != blank -%}
+        <a href="{{ section.settings.button_url_2 }}" class="btn btn--glass">{{ section.settings.button_text_2 }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- comment -%} Scroll Indicator {%- endcomment -%}
+  <div class="hero__scroll-indicator">
+    <span>scroll</span>
+    <div class="hero__scroll-line"></div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Banner Hero",
+  "tag": "section",
+  "class": "section-hero",
+  "settings": [
+    { "type": "video", "id": "video_bg", "label": "Vídeo de Fundo (Upload)" },
+    { "type": "text", "id": "mp4_url", "label": "URL Direta (MP4 via CDN)" },
+    {
+      "type": "video_url",
+      "id": "external_video_url",
+      "label": "YouTube / Vimeo URL",
+      "accept": ["youtube", "vimeo"]
+    },
+    { "type": "image_picker", "id": "image", "label": "Imagem de fundo (Fallback)" },
+    { "type": "text", "id": "badge", "label": "Badge", "default": "Artista Plástica Contemporânea" },
+    { "type": "text", "id": "heading", "label": "Título fixo", "default": "WanBitha" },
+    { "type": "header", "content": "Frases do Typewriter" },
+    { "type": "text", "id": "phrase_1", "label": "Frase 1", "default": "A Arte de Sentir em Cores e Texturas" },
+    { "type": "text", "id": "phrase_2", "label": "Frase 2", "default": "Onde Cada Pincelada Conta uma História" },
+    { "type": "text", "id": "phrase_3", "label": "Frase 3", "default": "Emoções Transformadas em Narrativas Visuais" },
+    { "type": "text", "id": "phrase_4", "label": "Frase 4", "default": "O Invisível Ganha Forma e Cor" },
+    { "type": "text", "id": "phrase_5", "label": "Frase 5", "default": "Arte Contemporânea que Desafia os Sentidos" },
+    { "type": "header", "content": "Descrição e Botões" },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Descrição",
+      "default": "Obras que desafiam os sentidos e transformam emoções em narrativas visuais contemporâneas."
+    },
+    { "type": "text", "id": "button_text", "label": "Botão 1", "default": "Explorar Galeria" },
+    { "type": "url", "id": "button_url", "label": "Link botão 1" },
+    { "type": "text", "id": "button_text_2", "label": "Botão 2", "default": "Sobre a Artista" },
+    { "type": "url", "id": "button_url_2", "label": "Link botão 2" }
+  ],
+  "presets": [{ "name": "Banner Hero" }]
+}
+{% endschema %}

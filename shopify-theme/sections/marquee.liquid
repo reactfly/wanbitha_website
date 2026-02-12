@@ -1,0 +1,42 @@
+<section class="marquee" aria-hidden="true">
+  <div class="marquee-track" data-speed="{{ section.settings.speed }}">
+    {%- for i in (1..2) -%}
+      {%- for block in section.blocks -%}
+        <span class="marquee-item" {{ block.shopify_attributes }}>
+          <span class="marquee-dot"></span>
+          {{ block.settings.text }}
+        </span>
+      {%- endfor -%}
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Marquee / Ticker",
+  "tag": "section",
+  "class": "section-marquee",
+  "settings": [
+    { "type": "range", "id": "speed", "min": 1, "max": 10, "step": 1, "default": 3, "label": "Velocidade do scroll" }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "Texto",
+      "settings": [{ "type": "text", "id": "text", "label": "Texto", "default": "Arte Contemporânea" }]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Marquee / Ticker",
+      "blocks": [
+        { "type": "text", "settings": { "text": "Arte Contemporânea" } },
+        { "type": "text", "settings": { "text": "Texturas Vivas" } },
+        { "type": "text", "settings": { "text": "Cores que Respiram" } },
+        { "type": "text", "settings": { "text": "Emoções em Tela" } },
+        { "type": "text", "settings": { "text": "WanBitha Studio" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

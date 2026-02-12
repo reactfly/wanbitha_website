@@ -1,0 +1,32 @@
+<section class="quote-section section-spacing">
+  <div class="container">
+    <div class="quote-section__card reveal-scale">
+      {%- if section.settings.label != blank -%}
+        <span class="label-tag mb-24" style="display:block;">{{ section.settings.label }}</span>
+      {%- endif -%}
+      <blockquote class="quote-section__text">"{{ section.settings.quote }}"</blockquote>
+      {%- if section.settings.author != blank -%}
+        <cite class="quote-section__author">— {{ section.settings.author }}</cite>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Citação / Manifesto",
+  "tag": "section",
+  "class": "section-quote",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Etiqueta", "default": "Manifesto" },
+    {
+      "type": "textarea",
+      "id": "quote",
+      "label": "Citação",
+      "default": "Cada pincelada é uma palavra não dita, cada cor uma emoção que respira, cada textura um toque do invisível."
+    },
+    { "type": "text", "id": "author", "label": "Autor", "default": "Wanessa Alcântara" }
+  ],
+  "presets": [{ "name": "Citação / Manifesto" }]
+}
+{% endschema %}

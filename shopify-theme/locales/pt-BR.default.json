@@ -1,0 +1,47 @@
+{
+  "general": {
+    "meta": {
+      "tagged": "Marcado com {{ tags }}",
+      "page": "Página {{ page }}"
+    }
+  },
+  "accessibility": {
+    "skip_to_content": "Pular para o conteúdo"
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Adicionar ao Carrinho",
+      "sold_out": "Esgotado",
+      "sale": "Promoção",
+      "quantity": "Quantidade",
+      "description": "Descrição",
+      "view": "Ver Obra"
+    }
+  },
+  "collections": {
+    "general": {
+      "title": "Coleções",
+      "view_all": "Ver Todas"
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "Carrinho",
+      "empty": "Seu carrinho está vazio",
+      "subtotal": "Subtotal",
+      "checkout": "Finalizar Compra",
+      "update": "Atualizar",
+      "continue_shopping": "Continuar Comprando"
+    }
+  },
+  "contact": {
+    "form": {
+      "name": "Nome",
+      "email": "E-mail",
+      "phone": "Telefone",
+      "message": "Mensagem",
+      "send": "Enviar Mensagem",
+      "success": "Mensagem enviada com sucesso!"
+    }
+  }
+}

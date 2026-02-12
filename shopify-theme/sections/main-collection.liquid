@@ -1,0 +1,58 @@
+<section class="collection-page">
+  <div class="container">
+    <div class="collection-page__header" data-animate>
+      <span class="label-tag mb-12" style="display: block;">Coleção</span>
+      <h1 class="heading-display heading-display--lg text-gradient">{{ collection.title }}</h1>
+      {%- if collection.description != blank -%}
+        <p class="collection-page__description">{{ collection.description }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="product-grid">
+      {%- paginate collection.products by section.settings.products_per_page -%}
+        {%- for product in collection.products -%}
+          {% render 'product-card', product: product %}
+        {%- endfor -%}
+      {%- endpaginate -%}
+    </div>
+
+    {%- paginate collection.products by section.settings.products_per_page -%}
+      {%- if paginate.pages > 1 -%}
+        <nav class="pagination" aria-label="Paginação">
+          {%- if paginate.previous -%}
+            <a href="{{ paginate.previous.url }}" aria-label="Anterior">&laquo;</a>
+          {%- endif -%}
+          {%- for part in paginate.parts -%}
+            {%- if part.is_link -%}
+              <a href="{{ part.url }}">{{ part.title }}</a>
+            {%- else -%}
+              <span class="is-active">{{ part.title }}</span>
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if paginate.next -%}
+            <a href="{{ paginate.next.url }}" aria-label="Próxima">&raquo;</a>
+          {%- endif -%}
+        </nav>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Página da Coleção",
+  "tag": "section",
+  "class": "section-collection",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 4,
+      "max": 24,
+      "step": 4,
+      "default": 12,
+      "label": "Produtos por página"
+    }
+  ]
+}
+{% endschema %}

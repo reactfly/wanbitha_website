@@ -1,0 +1,74 @@
+<section class="featured-collection section-spacing">
+  <div class="container">
+    <div class="featured-collection__header reveal">
+      {%- if section.settings.label != blank -%}
+        <span class="label-tag">{{ section.settings.label }}</span>
+      {%- endif -%}
+      <h2 class="heading-display heading-display--lg text-gradient" data-split-text>
+        {{ section.settings.heading | default: collection.title }}
+      </h2>
+      {%- if section.settings.description != blank -%}
+        <p class="featured-collection__description">{{ section.settings.description }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- assign collection = collections[section.settings.collection] -%}
+    {%- if collection != blank -%}
+      <div class="product-grid">
+        {%- for product in collection.products limit: section.settings.products_to_show -%}
+          <div class="reveal stagger-{{ forloop.index }}">
+            {% render 'product-card', product: product %}
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- if section.settings.show_view_all -%}
+        <div class="text-center reveal" style="margin-top:48px;">
+          <a href="{{ collection.url }}" class="btn btn--glass">
+            Ver Todas as Obras
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      {%- endif -%}
+    {%- else -%}
+      <div class="product-grid">
+        {%- for i in (1..section.settings.products_to_show) -%}
+          <div class="reveal stagger-{{ i }}">
+            <div class="product-card">
+              <div class="product-card__image-wrapper">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+              <div class="product-card__info">
+                <p class="product-card__vendor">WanBitha</p>
+                <h3 class="product-card__title">Obra de Arte {{ i }}</h3>
+                <p class="product-card__price">{{ 1999 | money }}</p>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Coleção Destaque",
+  "tag": "section",
+  "class": "section-featured-collection",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Etiqueta", "default": "Galeria" },
+    { "type": "text", "id": "heading", "label": "Título", "default": "Mergulhe no Vibrante" },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Descrição",
+      "default": "Cada obra conta uma história de emoções, texturas e cores que transcendem o convencional."
+    },
+    { "type": "collection", "id": "collection", "label": "Coleção" },
+    { "type": "range", "id": "products_to_show", "min": 2, "max": 12, "step": 1, "default": 4, "label": "Produtos" },
+    { "type": "checkbox", "id": "show_view_all", "default": true, "label": "Mostrar 'Ver Todas'" }
+  ],
+  "presets": [{ "name": "Coleção Destaque" }]
+}
+{% endschema %}

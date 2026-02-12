@@ -1,0 +1,104 @@
+{%- comment -%} Loading Screen (Hero Style & Progressive Reveal v2) {%- endcomment -%}
+<style>
+  /* Reset Critical Styles */
+  #loadingScreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: #000;
+    z-index: 2147483647 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: visibility 0.6s ease;
+    cursor: wait;
+  }
+
+  #loadingCounter {
+    /* Fallback Serif para garantir estilo Hero */
+    font-family: var(--font-display), 'Times New Roman', serif !important;
+    font-size: clamp(80px, 15vw, 250px) !important;
+    color: #fff !important;
+    font-weight: 300 !important;
+    line-height: 1 !important;
+    letter-spacing: -0.05em !important;
+
+    /* Glow Intenso */
+    text-shadow: 0 0 40px rgba(255, 255, 255, 0.6), 0 0 80px rgba(255, 255, 255, 0.3) !important;
+
+    opacity: 1;
+    transform: scale(1);
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+
+    /* Mistura com o fundo se transparente */
+    mix-blend-mode: exclusion;
+  }
+
+  /* Explosion effect */
+  #loadingScreen.is-zoom-out #loadingCounter {
+    transform: scale(8) !important;
+    opacity: 0 !important;
+    filter: blur(40px);
+  }
+
+  #loadingScreen.is-finished {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+</style>
+
+<div id="loadingScreen">
+  <div id="loadingCounter">0%</div>
+</div>
+
+<script>
+  (function () {
+    var count = 0;
+    var el = document.getElementById('loadingCounter');
+    var screen = document.getElementById('loadingScreen');
+
+    // Lock Scroll force
+    document.documentElement.style.setProperty('overflow', 'hidden', 'important');
+    document.body.style.setProperty('overflow', 'hidden', 'important');
+
+    function update() {
+      // Slower progress for dramatic effect
+      var increment = Math.floor(Math.random() * 3) + 1;
+      count += increment;
+      if (count > 100) count = 100;
+
+      if (el) el.innerText = count + '%';
+
+      // Progressive Reveal Logic
+      // 0% -> Opacity 1
+      // 100% -> Opacity 0 (quase)
+      if (screen) {
+        var opacity = Math.max(0.05, 1 - count / 100);
+        screen.style.backgroundColor = 'rgba(0, 0, 0, ' + opacity + ')';
+      }
+
+      if (count < 100) {
+        requestAnimationFrame(() => setTimeout(update, Math.random() * 60 + 30));
+      } else {
+        // Finish
+        setTimeout(function () {
+          if (screen) screen.classList.add('is-zoom-out');
+
+          setTimeout(function () {
+            if (screen) screen.classList.add('is-finished');
+            document.documentElement.style.overflow = '';
+            document.body.style.overflow = '';
+            window.dispatchEvent(new CustomEvent('loadingComplete'));
+          }, 800);
+        }, 300);
+      }
+    }
+
+    requestAnimationFrame(function () {
+      update();
+    });
+  })();
+</script>

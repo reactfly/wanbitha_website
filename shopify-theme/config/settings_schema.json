@@ -1,0 +1,87 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "WanBitha Art Theme",
+    "theme_version": "1.0.0",
+    "theme_author": "WanBitha Studio",
+    "theme_documentation_url": "https://wanbitha.com",
+    "theme_support_url": "https://wanbitha.com/contato"
+  },
+  {
+    "name": "Cores",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Cor de fundo",
+        "default": "#0d0610"
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "Cor de destaque (Rose)",
+        "default": "#d946a8"
+      },
+      {
+        "type": "color",
+        "id": "color_secondary",
+        "label": "Cor secundária (Lavanda)",
+        "default": "#c084fc"
+      },
+      {
+        "type": "color",
+        "id": "color_gold",
+        "label": "Cor dourada",
+        "default": "#fbbf24"
+      }
+    ]
+  },
+  {
+    "name": "Tipografia",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "font_display",
+        "label": "Fonte de Display",
+        "default": "bodoni_moda_n5"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_body",
+        "label": "Fonte de Corpo",
+        "default": "inter_n4"
+      }
+    ]
+  },
+  {
+    "name": "Favicon",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon",
+        "info": "Recomendado: 32x32px PNG"
+      }
+    ]
+  },
+  {
+    "name": "Redes Sociais",
+    "settings": [
+      {
+        "type": "text",
+        "id": "social_instagram_link",
+        "label": "URL do Instagram"
+      },
+      {
+        "type": "text",
+        "id": "social_whatsapp_link",
+        "label": "URL do WhatsApp"
+      },
+      {
+        "type": "text",
+        "id": "social_facebook_link",
+        "label": "URL do Facebook"
+      }
+    ]
+  }
+]

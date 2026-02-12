@@ -1,0 +1,160 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-banner",
+      "settings": {
+        "badge": "Artista Plástica Contemporânea",
+        "heading": "WanBitha",
+        "phrase_1": "A Arte de Sentir em Cores e Texturas",
+        "phrase_2": "Onde Cada Pincelada Conta uma História",
+        "phrase_3": "Emoções Transformadas em Narrativas Visuais",
+        "phrase_4": "O Invisível Ganha Forma e Cor",
+        "phrase_5": "Arte Contemporânea que Desafia os Sentidos",
+        "description": "Obras que desafiam os sentidos e transformam emoções em narrativas visuais contemporâneas.",
+        "button_text": "Explorar Galeria",
+        "button_url": "/collections/all",
+        "button_text_2": "Sobre a Artista",
+        "button_url_2": "/pages/about"
+      }
+    },
+    "marquee": {
+      "type": "marquee",
+      "settings": {
+        "speed": 3
+      },
+      "blocks": {
+        "word_1": { "type": "text", "settings": { "text": "Arte Contemporânea" } },
+        "word_2": { "type": "text", "settings": { "text": "Texturas Vivas" } },
+        "word_3": { "type": "text", "settings": { "text": "Cores que Respiram" } },
+        "word_4": { "type": "text", "settings": { "text": "Emoções em Tela" } },
+        "word_5": { "type": "text", "settings": { "text": "WanBitha Studio" } }
+      },
+      "block_order": ["word_1", "word_2", "word_3", "word_4", "word_5"]
+    },
+    "zoom_gallery": {
+      "type": "zoom-gallery",
+      "settings": {
+        "label": "Coleção Exclusiva",
+        "heading": "Fragmentos do Universo"
+      },
+      "blocks": {
+        "img1": { "type": "image", "settings": { "width": "medium", "caption": "Nebulosa Abstrata" } },
+        "img2": { "type": "image", "settings": { "width": "small", "caption": "Poeira Cósmica" } },
+        "img3": { "type": "image", "settings": { "width": "small", "caption": "Estigma" } },
+        "img4": { "type": "image", "settings": { "width": "large", "caption": "Vazio Criativo" } },
+        "img5": { "type": "image", "settings": { "width": "medium", "caption": "Horizonte de Eventos" } }
+      },
+      "block_order": ["img1", "img2", "img3", "img4", "img5"]
+    },
+    "featured": {
+      "type": "featured-collection",
+      "settings": {
+        "label": "Galeria",
+        "heading": "Mergulhe no Vibrante",
+        "description": "Cada obra conta uma história de emoções, texturas e cores que transcendem o convencional.",
+        "products_to_show": 4,
+        "show_view_all": true
+      }
+    },
+    "manifesto_text": {
+      "type": "scroll-reveal-text",
+      "settings": {
+        "text": "A arte não deve apenas ser vista.\nEla precisa ser sentida,\nrespirada e vivida\nem cada dimensão."
+      }
+    },
+    "horizontal_gallery": {
+      "type": "horizontal-gallery",
+      "settings": {
+        "heading": "Processo Criativo",
+        "description": "Do caos à ordem, cada coleção nasce de uma explosão estelar."
+      },
+      "blocks": {
+        "step1": {
+          "type": "card",
+          "settings": {
+            "heading": "Inspiração",
+            "text": "Capturando a luz das estrelas distantes."
+          }
+        },
+        "step2": {
+          "type": "card",
+          "settings": {
+            "heading": "Esboço",
+            "text": "Traçando as linhas do destino."
+          }
+        },
+        "step3": {
+          "type": "card",
+          "settings": {
+            "heading": "Matéria",
+            "text": "Dando corpo ao invisível."
+          }
+        },
+        "step4": {
+          "type": "card",
+          "settings": {
+            "heading": "Eternidade",
+            "text": "A obra ganha vida própria."
+          }
+        }
+      },
+      "block_order": ["step1", "step2", "step3", "step4"]
+    },
+    "image_text": {
+      "type": "image-text",
+      "settings": {
+        "reverse_layout": false,
+        "label": "Nossa História",
+        "heading": "Arte que Transcende o Tempo",
+        "gradient_title": true,
+        "body": "<p>Desde 2018, nossas obras têm atravessado fronteiras — conectando colecionadores ao que existe de mais autêntico na arte contemporânea brasileira. Cada tela é uma jornada sensorial única.</p>",
+        "show_stats": true,
+        "button_text": "Conhecer a Artista",
+        "button_url": "/pages/about",
+        "button_style": "primary"
+      },
+      "blocks": {
+        "stat_1": { "type": "stat", "settings": { "number": 150, "suffix": "+", "label": "Obras Criadas" } },
+        "stat_2": { "type": "stat", "settings": { "number": 40, "suffix": "+", "label": "Exposições" } },
+        "stat_3": { "type": "stat", "settings": { "number": 12, "suffix": "", "label": "Países" } }
+      },
+      "block_order": ["stat_1", "stat_2", "stat_3"]
+    },
+    "about": {
+      "type": "rich-text",
+      "settings": {
+        "label": "Sobre a Artista",
+        "heading": "O Traço por Trás da Obra",
+        "gradient_title": true,
+        "body": "<p>Wanessa Alcântara transforma emoções brutas em narrativas visuais. Com pinceladas que desafiam o convencional, suas obras são um convite ao sentir — onde cada textura guarda um segredo e cada cor revela uma história que palavras não alcançam.</p>"
+      }
+    },
+    "instagram_feed": {
+      "type": "instagram-feed",
+      "settings": {
+        "username": "wanbitha.art",
+        "description": "Acompanhe o processo criativo e novas obras em tempo real."
+      },
+      "blocks": {
+        "post1": { "type": "post", "settings": { "likes": "1.2k", "comments": "34" } },
+        "post2": { "type": "post", "settings": { "likes": "856", "comments": "12" } },
+        "post3": { "type": "post", "settings": { "likes": "2.3k", "comments": "89" } },
+        "post4": { "type": "post", "settings": { "likes": "1.5k", "comments": "45" } },
+        "post5": { "type": "post", "settings": { "likes": "940", "comments": "21" } },
+        "post6": { "type": "post", "settings": { "likes": "1.8k", "comments": "56" } }
+      },
+      "block_order": ["post1", "post2", "post3", "post4", "post5", "post6"]
+    }
+  },
+  "order": [
+    "hero",
+    "marquee",
+    "zoom_gallery",
+    "featured",
+    "manifesto_text",
+    "horizontal_gallery",
+    "image_text",
+    "about",
+    "instagram_feed"
+  ]
+}

@@ -1,0 +1,110 @@
+<section class="product-page" data-animate>
+  <div class="container">
+    <div class="product-page__grid">
+      {%- comment -%} Gallery {%- endcomment -%}
+      <div class="product-page__gallery">
+        <div class="product-page__main-image">
+          {%- if product.featured_image != blank -%}
+            <img
+              src="{{ product.featured_image | image_url: width: 900 }}"
+              alt="{{ product.featured_image.alt | default: product.title }}"
+              loading="eager"
+            >
+          {%- else -%}
+            {{ 'product-1' | placeholder_svg_tag }}
+          {%- endif -%}
+        </div>
+
+        {%- if product.images.size > 1 -%}
+          <div class="product-page__thumbnails">
+            {%- for image in product.images -%}
+              <button class="product-page__thumb{% if forloop.first %} is-active{% endif %}" aria-label="Imagem {{ forloop.index }}">
+                <img
+                  src="{{ image | image_url: width: 150 }}"
+                  alt="{{ image.alt | default: product.title }}"
+                  data-full-src="{{ image | image_url: width: 900 }}"
+                  loading="lazy"
+                >
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Info {%- endcomment -%}
+      <div class="product-page__info">
+        {%- if product.vendor != blank -%}
+          <p class="product-page__vendor">{{ product.vendor }}</p>
+        {%- endif -%}
+
+        <h1 class="product-page__title">{{ product.title }}</h1>
+
+        <p class="product-page__price" id="ProductPrice">
+          {{ product.price | money }}
+          {%- if product.compare_at_price > product.price -%}
+            <span class="product-card__price--compare">{{ product.compare_at_price | money }}</span>
+          {%- endif -%}
+        </p>
+
+        {%- if product.description != blank -%}
+          <div class="product-page__description">
+            {{ product.description }}
+          </div>
+        {%- endif -%}
+
+        {%- form 'product', product -%}
+          {%- if product.has_only_default_variant == false -%}
+            <div class="product-form__variants">
+              <label class="product-form__variant-label" for="ProductVariant">Opções</label>
+              <select name="id" id="ProductVariant" class="product-form__variant-select">
+                {%- for variant in product.variants -%}
+                  <option
+                    value="{{ variant.id }}"
+                    {% if variant == product.selected_or_first_available_variant %} selected{% endif %}
+                    {% unless variant.available %} disabled{% endunless %}
+                    data-price="{{ variant.price | money }}"
+                  >
+                    {{ variant.title }} — {{ variant.price | money }}
+                    {%- unless variant.available %} (Esgotado){% endunless -%}
+                  </option>
+                {%- endfor -%}
+              </select>
+            </div>
+          {%- else -%}
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          {%- endif -%}
+
+          <div class="product-form__quantity">
+            <button type="button" class="product-form__qty-btn" data-action="decrease" aria-label="Diminuir">−</button>
+            <input type="number" name="quantity" value="1" min="1" class="product-form__qty-input" aria-label="Quantidade">
+            <button type="button" class="product-form__qty-btn" data-action="increase" aria-label="Aumentar">+</button>
+          </div>
+
+          <button type="submit" class="btn btn--primary product-form__add-btn"{% unless product.available %} disabled{% endunless %}>
+            {%- if product.available -%}
+              Adicionar ao Carrinho
+            {%- else -%}
+              Esgotado
+            {%- endif -%}
+          </button>
+        {%- endform -%}
+
+        {%- if product.metafields.custom.series != blank -%}
+          <div class="glass-card" style="padding: 20px; margin-top: 24px;">
+            <span class="label-tag">Série</span>
+            <p style="margin-top: 8px; color: var(--text-secondary);">{{ product.metafields.custom.series }}</p>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Página do Produto",
+  "tag": "section",
+  "class": "section-product",
+  "settings": []
+}
+{% endschema %}

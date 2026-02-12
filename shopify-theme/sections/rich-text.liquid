@@ -1,0 +1,60 @@
+<section class="rich-text-section section-spacing">
+  <div class="container">
+    <div class="rich-text-section__inner">
+      {%- if section.settings.label != blank -%}
+        <span class="rich-text-section__label label-tag reveal">{{ section.settings.label }}</span>
+      {%- endif -%}
+
+      <h2 class="heading-display heading-display--lg reveal {% if section.settings.gradient_title %}text-gradient{% endif %}">
+        {{ section.settings.heading }}
+      </h2>
+
+      {%- if section.settings.body != blank -%}
+        <div class="rich-text-section__body text-editorial reveal">
+          {{ section.settings.body }}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.button_text != blank -%}
+        <div class="reveal" style="margin-top:36px;">
+          <a href="{{ section.settings.button_url }}" class="btn btn--{{ section.settings.button_style }}">
+            {{ section.settings.button_text }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Texto Rica",
+  "tag": "section",
+  "class": "section-rich-text",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Etiqueta", "default": "Sobre a Artista" },
+    { "type": "text", "id": "heading", "label": "Título", "default": "O Traço por Trás da Obra" },
+    { "type": "checkbox", "id": "gradient_title", "label": "Título com gradiente", "default": true },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Conteúdo",
+      "default": "<p>Wanessa Alcântara transforma emoções brutas em narrativas visuais. Com pinceladas que desafiam o convencional, suas obras são um convite ao sentir — onde cada textura guarda um segredo e cada cor revela uma história que palavras não alcançam.</p>"
+    },
+    { "type": "text", "id": "button_text", "label": "Texto do botão" },
+    { "type": "url", "id": "button_url", "label": "Link do botão" },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Estilo",
+      "options": [
+        { "value": "primary", "label": "Primário" },
+        { "value": "glass", "label": "Glass" },
+        { "value": "outline", "label": "Outline" }
+      ],
+      "default": "glass"
+    }
+  ],
+  "presets": [{ "name": "Texto Rica" }]
+}
+{% endschema %}

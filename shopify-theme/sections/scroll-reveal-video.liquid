@@ -1,0 +1,388 @@
+{% comment %}
+  Section: Scroll Reveal Video (Mystery Effect)
+  Description: A video that reveals itself mysteriously as you scroll, with blend modes and scroll-linked animations.
+{% endcomment %}
+
+<div
+  class="scroll-mystery-section"
+  data-section-id="{{ section.id }}"
+  data-section-type="scroll-mystery"
+  style="--min-height: {{ section.settings.scroll_height }}vh;"
+>
+  <div class="scroll-mystery__sticky-container">
+    <div class="scroll-mystery__video-wrapper">
+      {%- if section.settings.video_url != blank -%}
+        <video
+          class="scroll-mystery__video"
+          src="{{ section.settings.video_url }}"
+          muted
+          loop
+          playsinline
+          preload="auto"
+          aria-hidden="true"
+        ></video>
+      {%- endif -%}
+
+      {%- if section.settings.poster != blank -%}
+        <div
+          class="scroll-mystery__poster"
+          style="background-image: url('{{ section.settings.poster | image_url: width: 2000 }}');"
+        ></div>
+      {%- endif -%}
+
+      <div class="scroll-mystery__video-overlay"></div>
+    </div>
+
+    <div class="scroll-mystery__content container">
+      <div class="scroll-mystery__text-wrapper">
+        {%- if section.settings.heading != blank -%}
+          <h2 class="heading-display heading-display--xl scroll-mystery__heading" data-reveal-text>
+            {{ section.settings.heading }}
+          </h2>
+        {%- endif -%}
+
+        {%- if section.settings.text != blank -%}
+          <div class="scroll-mystery__body text-editorial" data-reveal-text>
+            {{ section.settings.text }}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="scroll-mystery__indicators" aria-hidden="true">
+      <div class="scroll-mystery__dot active"></div>
+      <div class="scroll-mystery__dot"></div>
+      <div class="scroll-mystery__dot"></div>
+    </div>
+
+    <button class="scroll-mystery__scroll-hint" aria-label="Scroll to explore">
+      <span class="scroll-mystery__arrow"></span>
+    </button>
+  </div>
+</div>
+
+<style>
+  .scroll-mystery-section {
+    position: relative;
+    height: var(--min-height, 300vh);
+    background-color: var(--color-bg-primary);
+    z-index: 10;
+  }
+
+  .scroll-mystery__sticky-container {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .scroll-mystery__video-wrapper {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background-color: #000;
+  }
+
+  .scroll-mystery__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    filter: blur(20px) grayscale(100%);
+    transform: scale(1.2);
+    /* Mystery Reveal Mask: Starts small circle, expands to full */
+    -webkit-mask-image: radial-gradient(circle at center, black 0%, transparent 0%);
+    mask-image: radial-gradient(circle at center, black 0%, transparent 0%);
+    transition: opacity 0.1s linear; /* Smoothness handled by RAF */
+    will-change: opacity, filter, transform, mask-image;
+    mix-blend-mode: {{ section.settings.blend_mode }};
+  }
+
+  .scroll-mystery__video-overlay {
+    position: absolute;
+    inset: 0;
+    /* Vignette effect */
+    background: radial-gradient(circle, transparent 40%, var(--color-bg-primary) 120%);
+    z-index: 2;
+    opacity: 0.8;
+  }
+
+  /* Poster Image Fallback */
+  .scroll-mystery__poster {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.2;
+    z-index: 0;
+    transition: opacity 0.5s ease;
+    mix-blend-mode: luminosity;
+  }
+
+  .scroll-mystery__content {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .scroll-mystery__heading {
+    margin-bottom: 24px;
+    color: var(--text-primary);
+    text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+
+  .scroll-mystery__body {
+    max-width: 600px;
+    margin: 0 auto;
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+  }
+
+  .scroll-mystery__indicators {
+    position: absolute;
+    right: 32px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 4;
+  }
+
+  .scroll-mystery__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+  }
+
+  .scroll-mystery__dot.active {
+    background: var(--color-rose-hot);
+    transform: scale(1.5);
+    box-shadow: 0 0 10px var(--color-rose-hot);
+  }
+
+  .scroll-mystery__scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    z-index: 4;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    animation: bounce 2s infinite;
+  }
+
+  .scroll-mystery-section.is-intro .scroll-mystery__scroll-hint {
+    opacity: 1;
+  }
+
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);}
+    40% {transform: translateX(-50%) translateY(-10px);}
+    60% {transform: translateX(-50%) translateY(-5px);}
+  }
+
+  .scroll-mystery__arrow {
+    display: block;
+    width: 20px;
+    height: 20px;
+    border-right: 2px solid white;
+    border-bottom: 2px solid white;
+    transform: rotate(45deg);
+  }
+
+  @media (max-width: 768px) {
+    .scroll-mystery__indicators { right: 16px; }
+    .scroll-mystery__heading { font-size: 2.5rem; }
+  }
+</style>
+
+<script>
+  (function () {
+    // Helper to format mask string
+    function getMaskString(size) {
+      // Ensure size is valid percentage
+      const s = Math.max(0, size);
+      // Soft edge for the mask: transparent starts 20% after black ends
+      return `radial-gradient(circle at center, black ${s}%, transparent ${s + 20}%)`;
+    }
+
+    const initSection = (section) => {
+      const video = section.querySelector('.scroll-mystery__video');
+      const poster = section.querySelector('.scroll-mystery__poster');
+      const dots = section.querySelectorAll('.scroll-mystery__dot');
+      const content = section.querySelector('.scroll-mystery__content');
+
+      let rafId = null;
+
+      const update = () => {
+        const rect = section.getBoundingClientRect();
+        const winHeight = window.innerHeight;
+        const totalDist = section.offsetHeight - winHeight;
+
+        let progress = (rect.top * -1) / totalDist;
+        progress = Math.max(0, Math.min(1, progress));
+
+        // --- Animation Logic ---
+
+        // 1. Reveal Phase (0% to 60% of scroll)
+        const revealPhase = Math.min(1, progress * 1.6);
+
+        if (video) {
+          // Opacity: 0 -> 1
+          video.style.opacity = Math.min(1, revealPhase * 1.5);
+
+          // Blur: 20px -> 0px
+          // Grayscale: 100% -> 0%
+          video.style.filter = `blur(${20 - revealPhase * 20}px) grayscale(${100 - revealPhase * 100}%)`;
+
+          // Scale: 1.2 -> 1.0
+          video.style.transform = `scale(${1.2 - revealPhase * 0.2})`;
+
+          // Mask Expand: 0% -> 150%
+          const maskSize = revealPhase * 150;
+          const maskVal = getMaskString(maskSize);
+          video.style.webkitMaskImage = maskVal;
+          video.style.maskImage = maskVal;
+        }
+
+        // Poster fade out as video reveals
+        if (poster) {
+          poster.style.opacity = Math.max(0, 0.2 - revealPhase * 0.2);
+        }
+
+        // 2. Content Parallax / Fade (Starts after 30%)
+        if (content) {
+          if (progress > 0.3) {
+            const contentProgress = Math.min(1, (progress - 0.3) * 2); // fast fade
+            content.style.opacity = contentProgress;
+            content.style.transform = `translateY(${40 - contentProgress * 40}px)`;
+          } else {
+            content.style.opacity = 0;
+            content.style.transform = `translateY(40px)`;
+          }
+        }
+
+        // 3. Navigation Dots
+        if (progress < 0.33) updateDots(dots, 0);
+        else if (progress < 0.66) updateDots(dots, 1);
+        else updateDots(dots, 2);
+
+        // 4. Intro Hint
+        if (progress < 0.05) section.classList.add('is-intro');
+        else section.classList.remove('is-intro');
+
+        rafId = null;
+      };
+
+      const onScroll = () => {
+        if (!rafId) {
+          rafId = requestAnimationFrame(update);
+        }
+      };
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              window.addEventListener('scroll', onScroll, { passive: true });
+              if (video && video.paused) video.play().catch(() => {}); // Autoplay if allowed
+              onScroll(); // Force update
+            } else {
+              window.removeEventListener('scroll', onScroll);
+              if (video && !video.paused) video.pause();
+            }
+          });
+        },
+        { rootMargin: '0px 0px 0px 0px' }
+      );
+
+      observer.observe(section);
+    };
+
+    const updateDots = (dots, index) => {
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+    };
+
+    // Initialize all instances
+    document.querySelectorAll('[data-section-type="scroll-mystery"]').forEach(initSection);
+
+    // Listen for Shopify theme editor events
+    document.addEventListener('shopify:section:load', (e) => {
+      if (e.target.dataset.sectionType === 'scroll-mystery') initSection(e.target);
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Scroll Video (Mystery)",
+  "settings": [
+    {
+      "type": "text",
+      "id": "video_url",
+      "label": "Video URL (MP4)",
+      "info": "Direct link to MP4/WebM file. Required for video effect."
+    },
+    {
+      "type": "image_picker",
+      "id": "poster",
+      "label": "Poster Image",
+      "info": "Shown while video loads or as a fallback."
+    },
+    {
+      "type": "range",
+      "id": "scroll_height",
+      "min": 150,
+      "max": 500,
+      "step": 50,
+      "unit": "vh",
+      "label": "Scroll Distance Height",
+      "default": 300
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Descubra o Invisível"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Role para revelar os mistérios ocultos."
+    },
+    {
+      "type": "select",
+      "id": "blend_mode",
+      "label": "Mystery Blend Mode",
+      "options": [
+        { "value": "normal", "label": "Normal" },
+        { "value": "multiply", "label": "Multiply (Darker)" },
+        { "value": "screen", "label": "Screen (Lighter)" },
+        { "value": "overlay", "label": "Overlay (Contrast)" },
+        { "value": "difference", "label": "Difference (Psychedelic)" }
+      ],
+      "default": "screen"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Scroll Reveal Video"
+    }
+  ]
+}
+{% endschema %}
