@@ -2,18 +2,20 @@ import React, { useRef, useLayoutEffect, useEffect, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
+
 gsap.registerPlugin(ScrollTrigger)
 
 /* ═══════════════════════════════════════════
    Cinematic Intro — Multi-phase reveal
    ═══════════════════════════════════════════
-   Phase 1: Orbital ring draws itself
-   Phase 2: Each letter cascades in with depth
-   Phase 3: Tagline types out one word at a time
-   Phase 4: CTA fades in, scroll hint pulses
-   Scroll: everything parallaxes away at
-          different speeds for depth effect
-*/
+   Phase 1: Orbital rings draw themselves (Primary, Secondary, Glow)
+   Phase 2: Floating particles with trails appear
+   Phase 3: Badge slides in
+   Phase 4: Title characters cascade with 3D rotation
+   Phase 5: Tagline types out character by character
+   Phase 6: Magnetic CTA fades in
+   Phase 7: Scroll hint with particle trail
+   ═══════════════════════════════════════════ */
 
 const SplitText = ({ text, className, style, charRefs }) => (
   <span className={className} style={style} aria-label={text}>
@@ -31,12 +33,87 @@ const SplitText = ({ text, className, style, charRefs }) => (
   </span>
 )
 
+const MouseGlow = () => {
+  const glowRef = useRef(null)
+
+  useEffect(() => {
+    const onMouseMove = (e) => {
+      gsap.to(glowRef.current, {
+        x: e.clientX,
+        y: e.clientY,
+        duration: 0.8,
+        ease: "power2.out",
+      })
+    }
+    window.addEventListener("mousemove", onMouseMove)
+    return () => window.removeEventListener("mousemove", onMouseMove)
+  }, [])
+
+  return (
+    <div
+      ref={glowRef}
+      className="fixed pointer-events-none z-0 mix-blend-screen"
+      style={{
+        width: "300px",
+        height: "300px",
+        background: "radial-gradient(circle, rgba(192,132,252,0.15) 0%, transparent 70%)",
+        transform: "translate(-50%, -50%)",
+        top: 0,
+        left: 0
+      }}
+    />
+  )
+}
+
+const TypewriterTagline = ({ delay = 3500 }) => {
+  const [displayText, setDisplayText] = useState("")
+  const fullText = "Cores · Texturas · Emoções"
+  const [started, setStarted] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setStarted(true), delay)
+    return () => clearTimeout(timer)
+  }, [delay])
+
+  useEffect(() => {
+    if (!started) return
+    
+    let currentIndex = 0
+    const interval = setInterval(() => {
+      if (currentIndex <= fullText.length) {
+        setDisplayText(fullText.slice(0, currentIndex))
+        currentIndex++
+      } else {
+        clearInterval(interval)
+      }
+    }, 80)
+    return () => clearInterval(interval)
+  }, [started])
+
+  return (
+    <span className="font-body uppercase text-sm tracking-[0.35em] text-white/40 h-[1.5em] block">
+      {displayText}
+      <span className="animate-blink inline-block w-[1px] h-[1em] bg-purple-400 align-middle ml-1"></span>
+    </span>
+  )
+}
+
+const ParticleTrail = () => {
+  return (
+    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-20 overflow-hidden pointer-events-none">
+       {/* Simple CSS-based particle emission for better performance than continuous state updates */}
+       <div className="absolute top-full left-1/2 w-0.5 h-0.5 bg-purple-400 rounded-full animate-[float_3s_ease-out_infinite] opacity-0" style={{ animationDelay: '0s' }} />
+       <div className="absolute top-full left-1/2 w-0.5 h-0.5 bg-pink-400 rounded-full animate-[float_3s_ease-out_infinite] opacity-0" style={{ animationDelay: '1s' }} />
+    </div>
+  )
+}
+
 export const TunnelIntro = () => {
   const sectionRef = useRef(null)
   const ringRef = useRef(null)
+  const ringSecRef = useRef(null)
   const ringGlowRef = useRef(null)
   const charRefs = useRef([])
-  const taglineWordsRef = useRef([])
   const ctaRef = useRef(null)
   const scrollHintRef = useRef(null)
   const lineTopRef = useRef(null)
@@ -46,7 +123,7 @@ export const TunnelIntro = () => {
   const particleRefs = useRef([])
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
 
-  // Mouse parallax for floating elements
+  // Mouse parallax
   useEffect(() => {
     const onMove = (e) => {
       setMousePos({
@@ -58,6 +135,55 @@ export const TunnelIntro = () => {
     return () => window.removeEventListener('mousemove', onMove)
   }, [])
 
+  // Magnetic Button Effect
+  useEffect(() => {
+    const btn = ctaRef.current
+    if (!btn) return
+
+    const handleMouseMove = (e) => {
+      const rect = btn.getBoundingClientRect()
+      const x = e.clientX - rect.left - rect.width / 2
+      const y = e.clientY - rect.top - rect.height / 2
+      
+      // Only magnetize if close
+      if (Math.abs(x) < 100 && Math.abs(y) < 100) {
+        gsap.to(btn, {
+          x: x * 0.3,
+          y: y * 0.3,
+          duration: 0.3,
+          ease: "power2.out",
+        })
+      } else {
+        gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.3)" })
+      }
+    }
+
+    const handleMouseLeave = () => {
+      gsap.to(btn, {
+        x: 0,
+        y: 0,
+        duration: 0.5,
+        ease: "elastic.out(1, 0.3)",
+      })
+    }
+
+    if(btn.parentElement) {
+        // Attach to a wrapper or the button itself
+        // For magnetic effect to work well, we usually attach listener to window or a larger area, 
+        // but here let's keep it simple and attach to button for hover-magnetism
+        btn.addEventListener('mousemove', handleMouseMove)
+        btn.addEventListener('mouseleave', handleMouseLeave)
+    }
+
+    return () => {
+      if(btn) {
+        btn.removeEventListener('mousemove', handleMouseMove)
+        btn.removeEventListener('mouseleave', handleMouseLeave)
+      }
+    }
+  }, [])
+
+
   useLayoutEffect(() => {
     const section = sectionRef.current
     if (!section) return
@@ -66,10 +192,15 @@ export const TunnelIntro = () => {
       // ── Master Timeline ──
       const master = gsap.timeline({ delay: 0.5 })
 
-      // Phase 0: Orbital ring draws in
+      // Phase 0: Orbital rings draw in
       master.fromTo(ringRef.current,
         { strokeDashoffset: 900, opacity: 0 },
         { strokeDashoffset: 0, opacity: 1, duration: 1.8, ease: 'power2.inOut' }
+      )
+      .fromTo(ringSecRef.current,
+        { strokeDashoffset: 300, opacity: 0 },
+        { strokeDashoffset: 0, opacity: 0.3, duration: 1.5, ease: 'power2.inOut' },
+        '<' // Start at same time
       )
       .fromTo(ringGlowRef.current,
         { opacity: 0 },
@@ -99,15 +230,17 @@ export const TunnelIntro = () => {
           y: 80,
           rotateX: 90,
           scale: 0.5,
+          filter: 'blur(10px)',
         },
         {
           opacity: 1,
           y: 0,
           rotateX: 0,
           scale: 1,
-          duration: 0.8,
-          stagger: { each: 0.05, from: 'center' },
-          ease: 'back.out(1.5)',
+          filter: 'blur(0px)',
+          duration: 1,
+          stagger: { each: 0.08, from: 'center' },
+          ease: 'elastic.out(1, 0.5)',
         },
         '-=0.3'
       )
@@ -123,28 +256,16 @@ export const TunnelIntro = () => {
       .fromTo(badgeRef.current,
         { opacity: 0, y: -15, scale: 0.9 },
         { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'back.out(2)' },
-        '-=0.2'
+        '-=0.5'
       )
 
-      // Phase 4: Tagline words appear one at a time
-      const tWords = taglineWordsRef.current.filter(Boolean)
-      master.fromTo(tWords,
-        { opacity: 0, y: 20, filter: 'blur(8px)' },
-        {
-          opacity: 1,
-          y: 0,
-          filter: 'blur(0px)',
-          duration: 0.5,
-          stagger: 0.12,
-          ease: 'power3.out'
-        },
-        '-=0.1'
-      )
+      // Phase 4: Tagline is handled by React component state/timer, we just wait a bit here visually in the timeline if needed
+      // Actually, we don't need to do anything here for tagline, it handles itself.
 
       // Phase 5: CTA
       .fromTo(ctaRef.current,
         { opacity: 0, scale: 0.85 },
-        { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(2)' },
+        { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(2)', delay: 2 }, // Delay to let tagline type
         '-=0.2'
       )
 
@@ -156,7 +277,7 @@ export const TunnelIntro = () => {
       )
 
       // ── Continuous animations ──
-      // Main Ring rotates slowly
+      // Main Ring rotates
       gsap.to(ringRef.current?.parentElement, {
         rotate: 360,
         duration: 40,
@@ -164,7 +285,7 @@ export const TunnelIntro = () => {
         ease: 'none',
       })
 
-      // Secondary Ring rotates faster reverse
+      // Secondary Ring rotates reverse
       gsap.to('.secondary-ring', {
         rotate: -360,
         duration: 25,
@@ -173,49 +294,16 @@ export const TunnelIntro = () => {
         transformOrigin: 'center center'
       })
 
-      // Ring glow pulses
-      gsap.to(ringGlowRef.current, {
-        opacity: 0.15,
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-        delay: 5,
-      })
-
-      // Title breathing (letter spacing)
-      gsap.to(chars, {
-        letterSpacing: '0.05em',
-        duration: 4,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-        stagger: { each: 0.02, from: 'center' }
-      })
-
-      // Title subtle float
-      gsap.to(chars, {
-        y: (i) => Math.sin(i * 0.5) * 5,
-        duration: 3,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-        delay: 6,
-        stagger: { each: 0.08, from: 'center' },
-      })
-
-      // Particles continuous parallax & twinkle
+      // Particle float sine wave
       gsap.to(particleRefs.current.filter(Boolean), {
         y: (i) => Math.sin(i * 0.8 + 2) * 20,
         x: (i) => Math.cos(i * 0.6 + 1) * 15,
         opacity: (i) => 0.3 + Math.random() * 0.5,
-        scale: (i) => 0.8 + Math.random() * 0.4,
         duration: 3 + Math.random() * 2,
         repeat: -1,
         yoyo: true,
-        ease: 'sine.inOut',
-        delay: 7,
-        stagger: 0.2,
+        ease: "sine.inOut",
+        stagger: 0.2
       })
 
       // ── Scroll-driven parallax exit ──
@@ -228,7 +316,6 @@ export const TunnelIntro = () => {
         },
       })
 
-      // Different layers move at different speeds for depth
       scrollTl
         .to(scrollHintRef.current, { opacity: 0, y: -20, duration: 0.05 }, 0)
         .to(badgeRef.current, { opacity: 0, y: -60, duration: 0.2 }, 0)
@@ -244,21 +331,19 @@ export const TunnelIntro = () => {
         .to(chars, {
           opacity: 0,
           y: (i) => -100 - i * 10,
-          z: -200,
           rotateX: -45,
           scale: 0.8,
           stagger: { each: 0.01, from: 'edges' },
           duration: 0.25,
         }, 0.05)
-        .to(tWords, { opacity: 0, y: -40, stagger: 0.02, duration: 0.2 }, 0.1)
         .to(ctaRef.current, { opacity: 0, y: -30, scale: 0.9, duration: 0.15 }, 0.15)
 
     }, section)
 
-    // Auto-skip
+    // Auto-skip - reduced to 8s
     const timer = setTimeout(() => {
       window.scrollTo({ top: window.innerHeight * 1.2, behavior: 'smooth' })
-    }, 18000)
+    }, 8000)
 
     return () => {
       clearTimeout(timer)
@@ -266,17 +351,17 @@ export const TunnelIntro = () => {
     }
   }, [])
 
-  const taglineWords = ['Cores', '·', 'Texturas', '·', 'Emoções']
-
   return (
     <section
       ref={sectionRef}
       className="tunnel-intro relative w-full h-screen flex items-center justify-center overflow-hidden z-30"
       id="inicio"
     >
+      <MouseGlow />
+      
       <div className="relative z-10 flex flex-col items-center justify-center text-center px-6">
 
-        {/* ── Orbital Ring ── */}
+        {/* ── Orbital Ring System ── */}
         <div
           className="absolute"
           style={{
@@ -287,6 +372,15 @@ export const TunnelIntro = () => {
           }}
         >
           <svg viewBox="0 0 300 300" className="w-full h-full" style={{ filter: 'drop-shadow(0 0 15px rgba(192,132,252,0.2))' }}>
+            <defs>
+              <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#c084fc" stopOpacity="0.6" />
+                <stop offset="33%" stopColor="#f472c4" stopOpacity="0.8" />
+                <stop offset="66%" stopColor="#fbbf24" stopOpacity="0.4" />
+                <stop offset="100%" stopColor="#c084fc" stopOpacity="0.6" />
+              </linearGradient>
+            </defs>
+            
             {/* Main ring */}
             <circle
               ref={ringRef}
@@ -297,16 +391,18 @@ export const TunnelIntro = () => {
               strokeDasharray="900"
               strokeDashoffset="900"
               opacity="0"
+              className="ring-primary"
             />
             {/* Secondary Inner Ring */}
             <circle
+              ref={ringSecRef}
               className="secondary-ring"
               cx="150" cy="150" r="110"
               fill="none"
               stroke="#fbbf24"
               strokeWidth="0.5"
               strokeDasharray="20 40"
-              opacity="0.3"
+              opacity="0"
               style={{ transformOrigin: 'center center' }}
             />
             {/* Glow ring */}
@@ -317,17 +413,9 @@ export const TunnelIntro = () => {
               stroke="url(#ringGradient)"
               strokeWidth="3"
               opacity="0"
-              style={{ filter: 'blur(8px)' }}
+              style={{ filter: 'blur(8px)', animation: 'ringPulse 2s ease-in-out infinite' }}
             />
-            {/* Gradient definition */}
-            <defs>
-              <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#c084fc" stopOpacity="0.6" />
-                <stop offset="33%" stopColor="#f472c4" stopOpacity="0.8" />
-                <stop offset="66%" stopColor="#fbbf24" stopOpacity="0.4" />
-                <stop offset="100%" stopColor="#c084fc" stopOpacity="0.6" />
-              </linearGradient>
-            </defs>
+            
             {/* Dots on ring */}
             {[0, 60, 120, 180, 240, 300].map((angle, i) => {
               const rad = (angle * Math.PI) / 180
@@ -346,7 +434,7 @@ export const TunnelIntro = () => {
           </svg>
         </div>
 
-        {/* ── Parallax Floating Particles ── */}
+        {/* ── Parallax Floating Particles (Expanded) ── */}
         {[
           { x: -20, y: -15, size: 4, color: '#c084fc', speed: 0.3 },
           { x: 25, y: -20, size: 3, color: '#f472c4', speed: 0.5 },
@@ -354,6 +442,9 @@ export const TunnelIntro = () => {
           { x: 30, y: 15, size: 3, color: '#c084fc', speed: 0.6 },
           { x: -10, y: 30, size: 4, color: '#f472c4', speed: 0.35 },
           { x: 15, y: -25, size: 3, color: '#fbbf24', speed: 0.45 },
+          { x: -40, y: 10, size: 2, color: '#c084fc', speed: 0.2 },
+          { x: 40, y: -10, size: 2, color: '#f472c4', speed: 0.3 },
+          { x: 0, y: -40, size: 4, color: '#fbbf24', speed: 0.5 },
         ].map((p, i) => (
           <div
             key={i}
@@ -436,32 +527,19 @@ export const TunnelIntro = () => {
           }}
         />
 
-        {/* ── Tagline — Word by word ── */}
-        <p className="flex items-center gap-3 mb-12 relative z-10"
+        {/* ── Tagline — Typewriter ── */}
+        <div className="flex items-center justify-center gap-3 mb-12 relative z-10 min-h-[2rem]"
           style={{ transform: `translate(${mousePos.x * 3}px, ${mousePos.y * 2}px)`, transition: 'transform 0.4s ease-out' }}
         >
-          {taglineWords.map((word, i) => (
-            <span
-              key={i}
-              ref={el => { taglineWordsRef.current[i] = el }}
-              className={`font-body uppercase opacity-0 ${word === '·' ? 'text-purple-400' : ''}`}
-              style={{
-                fontSize: word === '·' ? '1.2rem' : 'clamp(0.65rem, 1.2vw, 0.85rem)',
-                letterSpacing: word === '·' ? '0' : '0.35em',
-                color: word === '·' ? undefined : 'rgba(255,255,255,0.4)',
-              }}
-            >
-              {word}
-            </span>
-          ))}
-        </p>
+          <TypewriterTagline delay={3000} />
+        </div>
 
         {/* ── CTA ── */}
         <button
           ref={ctaRef}
           className="group relative z-10 cursor-pointer opacity-0"
           onClick={() => window.scrollTo({ top: window.innerHeight * 1.2, behavior: 'smooth' })}
-          style={{ transform: `translate(${mousePos.x * 2}px, ${mousePos.y * 2}px)`, transition: 'transform 0.4s ease-out' }}
+          style={{ transition: 'transform 0.1s ease-out' }} 
         >
           <span
             className="relative z-10 inline-flex items-center gap-3 px-10 py-4 rounded-full font-display tracking-wider transition-all duration-500 group-hover:tracking-widest group-hover:gap-4"
@@ -483,6 +561,7 @@ export const TunnelIntro = () => {
 
         {/* ── Scroll Hint ── */}
         <div ref={scrollHintRef} className="absolute -bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-0">
+          <ParticleTrail />
           <div className="w-5 h-8 rounded-full border border-white/15 flex justify-center pt-1.5">
             <div
               className="w-0.5 h-2 rounded-full bg-white/40"

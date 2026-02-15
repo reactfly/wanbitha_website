@@ -1,0 +1,20 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" style="stop-color:rgb(255,0,255);stop-opacity:0.6" />
+      <stop offset="70%" style="stop-color:rgb(75,0,130);stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:rgb(0,0,0);stop-opacity:0" />
+    </radialGradient>
+    <radialGradient id="grad2" cx="30%" cy="40%" r="40%" fx="30%" fy="40%">
+      <stop offset="0%" style="stop-color:rgb(0,255,255);stop-opacity:0.5" />
+      <stop offset="100%" style="stop-color:rgb(0,0,50);stop-opacity:0" />
+    </radialGradient>
+    <filter id="blur">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="40" />
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" fill="black" />
+  <circle cx="512" cy="512" r="400" fill="url(#grad1)" filter="url(#blur)" />
+  <circle cx="300" cy="400" r="300" fill="url(#grad2)" filter="url(#blur)" />
+  <circle cx="800" cy="700" r="200" fill="#ff0066" opacity="0.3" filter="url(#blur)" />
+</svg>
